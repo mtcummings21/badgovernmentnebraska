@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ledger &mdash; Nebraska Legislature Bill Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="wordmark">
+      <svg class="tower-mark" viewBox="0 0 40 60" aria-hidden="true">
+        <rect x="16" y="0" width="8" height="60" fill="currentColor"/>
+        <rect x="8" y="46" width="24" height="14" fill="currentColor"/>
+        <rect x="0" y="54" width="40" height="6" fill="currentColor"/>
+        <circle cx="20" cy="8" r="3" fill="currentColor"/>
+      </svg>
+      <div>
+        <h1>Ledger</h1>
+        <p class="wordmark-sub">Nebraska Unicameral, tracked</p>
+      </div>
+    </div>
+    <div class="source-pill" id="source-pill">Loading&hellip;</div>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <h2>Every bill moving through the Nebraska Legislature, in one place.</h2>
+    <p class="hero-sub">Introduced, in committee, on the floor, or on the Governor's desk &mdash; pulled straight from the state's legislative record.</p>
+    <div class="stat-strip" id="stat-strip" aria-live="polite">
+      <div class="stat"><span class="stat-num" data-stat="total">&ndash;</span><span class="stat-label">Bills tracked</span></div>
+      <div class="stat"><span class="stat-num" data-stat="committee">&ndash;</span><span class="stat-label">In committee</span></div>
+      <div class="stat"><span class="stat-num" data-stat="floor">&ndash;</span><span class="stat-label">On the floor</span></div>
+      <div class="stat"><span class="stat-num" data-stat="signed">&ndash;</span><span class="stat-label">Signed into law</span></div>
+    </div>
+  </section>
+
+  <section class="workspace">
+    <aside class="filters">
+      <div class="filter-group">
+        <label for="search">Search</label>
+        <input type="search" id="search" placeholder="Bill number, title, keyword&hellip;" />
+      </div>
+      <div class="filter-group">
+        <label for="status-filter">Stage</label>
+        <select id="status-filter">
+          <option value="all">All stages</option>
+          <option value="introduced">Introduced</option>
+          <option value="committee">In Committee</option>
+          <option value="general_file">General File</option>
+          <option value="select_file">Select File</option>
+          <option value="final_reading">Final Reading</option>
+          <option value="governor">With Governor</option>
+          <option value="signed">Signed</option>
+          <option value="vetoed">Vetoed</option>
+          <option value="failed">Failed</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="sort-order">Sort by</label>
+        <select id="sort-order">
+          <option value="recent">Most recent action</option>
+          <option value="number">Bill number</option>
+        </select>
+      </div>
+    </aside>
+
+    <section class="bill-list-wrap">
+      <div id="bill-list" class="bill-list" aria-live="polite"></div>
+      <p id="empty-state" class="empty-state" hidden>No bills match those filters.</p>
+    </section>
+  </section>
+</main>
+
+<div id="detail-overlay" class="detail-overlay" hidden>
+  <div class="detail-panel" role="dialog" aria-modal="true" aria-labelledby="detail-title">
+    <button id="detail-close" class="detail-close" aria-label="Close bill detail">&times;</button>
+    <div id="detail-body"></div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <p>Prototype. Data via <a href="https://legiscan.com/legiscan" target="_blank" rel="noopener">LegiScan</a> when configured, otherwise sample data. Verify anything important against <a href="https://nebraskalegislature.gov" target="_blank" rel="noopener">nebraskalegislature.gov</a>.</p>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
