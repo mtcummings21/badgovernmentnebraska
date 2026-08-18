@@ -295,9 +295,16 @@ a { color: var(--prairie); }
   position: fixed;
   inset: 0;
   background: rgba(36, 33, 27, 0.55);
-  display: flex;
   justify-content: flex-end;
   z-index: 20;
+}
+
+.detail-overlay[hidden] {
+  display: none;
+}
+
+.detail-overlay:not([hidden]) {
+  display: flex;
 }
 
 .detail-panel {
