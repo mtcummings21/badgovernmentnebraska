@@ -78,7 +78,7 @@ function setActiveTab(view) {
 
 function showView(view) {
   const sections = {
-    home: ["view-home", "view-home-workspace"],
+    home: ["view-home-workspace"],
     bills: ["view-bills", "view-bills-workspace"],
     senators: ["view-senators", "view-senators-workspace"],
     offices: ["view-offices", "view-offices-workspace"],
