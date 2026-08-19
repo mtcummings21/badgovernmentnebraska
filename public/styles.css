@@ -376,12 +376,13 @@ a { color: var(--prairie); }
   margin: 2px 0 4px;
 }
 
-.senator-committee-preview {
+.senator-elected {
   font-size: 12.5px;
   color: var(--muted);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  margin: 0;
 }
 
 /* Senator detail panel */

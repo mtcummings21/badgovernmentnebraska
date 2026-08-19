@@ -46,12 +46,39 @@ app.get("/api/status", (req, res) => {
 
 // ---------- Roster helper (shared by bill sponsor enrichment + senator routes) ----------
 
+// The roster page itself (senator_list.php) only has name + district; elected
+// year lives on each senator's individual detail page. Rather than make the
+// list view wait on 49 sequential detail fetches, pull them with a small
+// concurrency cap and cache each detail result along the way, so a later
+// click into a senator's profile is already warm.
+const ROSTER_ENRICH_CONCURRENCY = 6;
+
+async function enrichRosterWithElectedYears(roster) {
+  const queue = [...roster];
+  const worker = async () => {
+    while (queue.length > 0) {
+      const senator = queue.shift();
+      try {
+        const detail = await fetchSenatorDetail(senator.district);
+        senator.electedYear = detail.electedYear;
+        senatorDetailCache.set(senator.id, { data: detail, source: "official", fetchedAt: Date.now() });
+      } catch (err) {
+        console.error(`Could not fetch elected year for district ${senator.district}:`, err.message);
+        senator.electedYear = null;
+      }
+    }
+  };
+  await Promise.all(Array.from({ length: ROSTER_ENRICH_CONCURRENCY }, worker));
+  return roster;
+}
+
 async function getRoster() {
   const fresh = rosterCache.data && Date.now() - rosterCache.fetchedAt < SENATOR_CACHE_TTL_MS;
   if (fresh) return rosterCache;
 
   try {
     const data = await fetchSenatorRoster();
+    await enrichRosterWithElectedYears(data);
     rosterCache = { data, fetchedAt: Date.now(), source: "official" };
   } catch (err) {
     console.error("Failed to scrape senator roster, falling back to sample data:", err.message);

@@ -351,7 +351,7 @@ function renderSenatorGrid(senators) {
         <div class="senator-card-body">
           <div class="senator-district">District ${s.district}</div>
           <h3 class="senator-name">${s.fullName}</h3>
-          <p class="senator-committee-preview">${(s.committees && s.committees[0] && s.committees[0].name) || "\u2014"}</p>
+          <p class="senator-elected">${s.electedYear ? `Elected ${s.electedYear}` : "Election year unavailable"}</p>
         </div>
       </article>
     `
