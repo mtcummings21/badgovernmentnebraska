@@ -5,6 +5,9 @@ const { fetchBillList, fetchBillDetail } = require("./src/legiscan");
 const { mockBills } = require("./src/mockData");
 const { fetchSenatorRoster, fetchSenatorDetail } = require("./src/senators");
 const { mockSenators } = require("./src/mockSenators");
+const { constitutionalOffices } = require("./src/constitutionalOffices");
+const { fetchAllNews } = require("./src/news");
+const { mockNews } = require("./src/mockNews");
 const { enrichSponsors } = require("./src/nameMatch");
 
 const app = express();
@@ -27,12 +30,15 @@ const TERM_INFO = {
 // at the start of a biennium -- so it gets a much longer one.
 const BILL_CACHE_TTL_MS = 15 * 60 * 1000; // 15 minutes
 const SENATOR_CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
+const NEWS_CACHE_TTL_MS = 30 * 60 * 1000; // 30 minutes
 
 let listCache = { data: null, fetchedAt: 0 };
 const detailCache = new Map(); // billId -> { data, fetchedAt }
 
 let rosterCache = { data: null, fetchedAt: 0, source: null };
 const senatorDetailCache = new Map(); // senatorId -> { data, fetchedAt, source }
+
+let newsCache = { data: null, fetchedAt: 0, source: null };
 
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -180,6 +186,41 @@ app.get("/api/senators/:id", async (req, res) => {
     source,
     termInfo: TERM_INFO,
     senator: detail,
+  });
+});
+
+// ---------- News ----------
+
+// Merges RSS feeds from Nebraska Examiner and Flatwater Free Press (see
+// src/news.js for why these two). Falls back to sample headlines if every
+// feed fails, same pattern as bills/senators.
+app.get("/api/news", async (req, res) => {
+  const fresh = newsCache.data && Date.now() - newsCache.fetchedAt < NEWS_CACHE_TTL_MS;
+  if (fresh) {
+    return res.json({ source: newsCache.source, articles: newsCache.data });
+  }
+
+  try {
+    const { articles, errors } = await fetchAllNews();
+    newsCache = { data: articles, fetchedAt: Date.now(), source: "rss" };
+    const payload = { source: "rss", articles };
+    if (errors.length > 0) payload.warning = `Some feeds failed: ${errors.join("; ")}`;
+    res.json(payload);
+  } catch (err) {
+    console.error("Failed to fetch any news feed, falling back to sample data:", err.message);
+    newsCache = { data: mockNews, fetchedAt: Date.now(), source: "mock" };
+    res.json({ source: "mock", articles: mockNews, warning: "RSS feeds unreachable; showing sample data." });
+  }
+});
+
+// ---------- Constitutional offices ----------
+
+// Hand-maintained, not scraped -- see src/constitutionalOffices.js for why.
+// Note: all six offices are up for election November 3, 2026.
+app.get("/api/offices", (req, res) => {
+  res.json({
+    offices: constitutionalOffices,
+    note: "All six offices are on the ballot November 3, 2026; officeholders take office in January 2027.",
   });
 });
 

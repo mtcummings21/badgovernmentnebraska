@@ -432,6 +432,159 @@ a { color: var(--prairie); }
   gap: 8px;
 }
 
+/* ---------- News ---------- */
+
+.news-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.news-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px 20px;
+}
+
+.news-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.news-source {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--prairie);
+}
+
+.news-date {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+.news-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 8px;
+}
+
+.news-title a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.news-title a:hover { color: var(--prairie); }
+
+.news-snippet {
+  font-size: 13.5px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin: 0 0 10px;
+}
+
+.news-link {
+  font-size: 13px;
+  color: var(--prairie);
+  text-decoration: none;
+  border-bottom: 1px solid var(--border);
+}
+
+.news-link:hover { border-bottom-color: var(--prairie); }
+
+/* ---------- Constitutional offices ---------- */
+
+.offices-workspace {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 32px 28px 80px;
+}
+
+.offices-workspace[hidden] {
+  display: none;
+}
+
+.offices-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.office-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.office-title {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.office-holder {
+  font-weight: 600;
+  font-size: 18px;
+  margin: 0;
+}
+
+.office-party {
+  font-size: 13px;
+  color: var(--muted);
+  margin: -6px 0 0;
+}
+
+.office-meta {
+  font-size: 12.5px;
+  color: var(--muted);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.office-duties {
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+
+.office-note {
+  font-size: 12.5px;
+  color: var(--muted);
+  font-style: italic;
+  border-top: 1px solid var(--border);
+  padding-top: 10px;
+  margin-top: 2px;
+}
+
+.office-link {
+  font-size: 13px;
+  color: var(--prairie);
+  text-decoration: none;
+  border-bottom: 1px solid var(--border);
+  align-self: flex-start;
+}
+
+.office-link:hover { border-bottom-color: var(--prairie); }
+
+.offices-note {
+  color: var(--muted);
+  font-size: 13px;
+  margin-top: 24px;
+  text-align: center;
+}
+
 /* ---------- Detail overlay ---------- */
 
 .detail-overlay {

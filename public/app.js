@@ -25,6 +25,8 @@ const STAGE_LABELS = {
 
 let allBills = [];
 let allSenators = [];
+let allOffices = [];
+let allNews = [];
 let termInfo = null;
 
 function ladderInfo(status) {
@@ -75,12 +77,18 @@ function setActiveTab(view) {
 }
 
 function showView(view) {
-  const isBills = view === "senators" ? false : true;
-  document.getElementById("view-bills").hidden = !isBills;
-  document.getElementById("view-bills-workspace").hidden = !isBills;
-  document.getElementById("view-senators").hidden = isBills;
-  document.getElementById("view-senators-workspace").hidden = isBills;
-  setActiveTab(isBills ? "bills" : "senators");
+  const sections = {
+    bills: ["view-bills", "view-bills-workspace"],
+    senators: ["view-senators", "view-senators-workspace"],
+    offices: ["view-offices", "view-offices-workspace"],
+    news: ["view-news", "view-news-workspace"],
+  };
+  Object.entries(sections).forEach(([name, ids]) => {
+    ids.forEach((id) => {
+      document.getElementById(id).hidden = name !== view;
+    });
+  });
+  setActiveTab(view);
 }
 
 function route() {
@@ -100,6 +108,15 @@ function route() {
     }
   } else {
     closeSenatorDetail();
+  }
+
+  if (view === "offices" && allOffices.length === 0) {
+    loadOffices();
+  }
+
+  if (view === "news") {
+    if (allNews.length === 0) loadNews();
+    else applyNewsFiltersAndRender();
   }
 }
 
@@ -459,6 +476,125 @@ document.addEventListener("keydown", (e) => {
     closeSenatorDetail();
   }
 });
+
+// ---------------------------------------------------------------------------
+// Constitutional offices
+// ---------------------------------------------------------------------------
+
+async function loadOffices() {
+  const gridEl = document.getElementById("offices-grid");
+  gridEl.innerHTML = `<p class="empty-state">Loading&hellip;</p>`;
+
+  try {
+    const res = await fetch("/api/offices");
+    const data = await res.json();
+    allOffices = data.offices || [];
+    renderOfficesGrid(allOffices);
+    document.getElementById("offices-note").textContent = data.note || "";
+  } catch (err) {
+    console.error("Falling back to nothing, backend unreachable:", err);
+    gridEl.innerHTML = `<p class="empty-state">Could not reach the server. Is it running?</p>`;
+  }
+}
+
+function renderOfficesGrid(offices) {
+  const gridEl = document.getElementById("offices-grid");
+
+  gridEl.innerHTML = offices
+    .map(
+      (o) => `
+      <article class="office-card">
+        <div class="office-title">${o.title}</div>
+        <h3 class="office-holder">${o.currentHolder}</h3>
+        <p class="office-party">${o.party || ""}</p>
+        <div class="office-meta">
+          <span>In office since ${o.since}</span>
+          <span>${o.termLength}</span>
+          <span>Next election: ${o.nextElection}</span>
+        </div>
+        <p class="office-duties">${o.duties || ""}</p>
+        ${o.notes ? `<p class="office-note">${o.notes}</p>` : ""}
+        ${
+          o.officialUrl
+            ? `<a class="office-link" href="${o.officialUrl}" target="_blank" rel="noopener">Official website &rarr;</a>`
+            : ""
+        }
+      </article>
+    `
+    )
+    .join("");
+}
+
+// ---------------------------------------------------------------------------
+// News
+// ---------------------------------------------------------------------------
+
+function formatNewsDate(dateStr) {
+  if (!dateStr) return "";
+  const d = new Date(dateStr);
+  if (isNaN(d)) return "";
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" });
+}
+
+async function loadNews() {
+  const listEl = document.getElementById("news-list");
+  listEl.innerHTML = `<p class="empty-state">Loading headlines&hellip;</p>`;
+
+  try {
+    const res = await fetch("/api/news");
+    const data = await res.json();
+    allNews = data.articles || [];
+    applyNewsFiltersAndRender();
+  } catch (err) {
+    console.error("Falling back to nothing, backend unreachable:", err);
+    listEl.innerHTML = `<p class="empty-state">Could not reach the server. Is it running?</p>`;
+  }
+}
+
+function applyNewsFiltersAndRender() {
+  const query = document.getElementById("news-search").value.trim().toLowerCase();
+  const sourceFilter = document.getElementById("news-source-filter").value;
+
+  const filtered = allNews.filter((a) => {
+    const matchesQuery =
+      !query || a.title.toLowerCase().includes(query) || (a.snippet || "").toLowerCase().includes(query);
+    const matchesSource = sourceFilter === "all" || a.source === sourceFilter;
+    return matchesQuery && matchesSource;
+  });
+
+  renderNewsList(filtered);
+}
+
+function renderNewsList(articles) {
+  const listEl = document.getElementById("news-list");
+  const emptyEl = document.getElementById("news-empty-state");
+
+  if (articles.length === 0) {
+    listEl.innerHTML = "";
+    emptyEl.hidden = false;
+    return;
+  }
+  emptyEl.hidden = true;
+
+  listEl.innerHTML = articles
+    .map(
+      (a) => `
+      <article class="news-card">
+        <div class="news-card-top">
+          <span class="news-source">${a.source}</span>
+          <span class="news-date">${formatNewsDate(a.pubDate)}</span>
+        </div>
+        <h3 class="news-title"><a href="${a.link}" target="_blank" rel="noopener">${a.title}</a></h3>
+        ${a.snippet ? `<p class="news-snippet">${a.snippet}</p>` : ""}
+        <a class="news-link" href="${a.link}" target="_blank" rel="noopener">Read full story &rarr;</a>
+      </article>
+    `
+    )
+    .join("");
+}
+
+document.getElementById("news-search").addEventListener("input", applyNewsFiltersAndRender);
+document.getElementById("news-source-filter").addEventListener("change", applyNewsFiltersAndRender);
 
 // ---------------------------------------------------------------------------
 // Boot

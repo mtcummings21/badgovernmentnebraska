@@ -31,6 +31,8 @@
     <div class="primary-nav-inner">
       <a href="#/bills" class="nav-tab" data-view="bills">Bills</a>
       <a href="#/senators" class="nav-tab" data-view="senators">Senators</a>
+      <a href="#/offices" class="nav-tab" data-view="offices">Offices</a>
+      <a href="#/news" class="nav-tab" data-view="news">News</a>
     </div>
   </nav>
 </header>
@@ -108,6 +110,43 @@
       <p id="senator-empty-state" class="empty-state" hidden>No senators match that search.</p>
     </section>
   </section>
+
+  <section class="hero" id="view-offices" hidden>
+    <h2>Nebraska's constitutional executive offices.</h2>
+    <p class="hero-sub">The six statewide elected offices established directly by the Nebraska Constitution &mdash; who holds them, and what each one does.</p>
+  </section>
+
+  <section class="offices-workspace" id="view-offices-workspace" hidden>
+    <div id="offices-grid" class="offices-grid" aria-live="polite"></div>
+    <p id="offices-note" class="offices-note"></p>
+  </section>
+
+  <section class="hero" id="view-news" hidden>
+    <h2>Nebraska government and politics news.</h2>
+    <p class="hero-sub">Headlines from Nebraska Examiner and Flatwater Free Press &mdash; two nonprofit newsrooms that cover state government closely.</p>
+  </section>
+
+  <section class="workspace" id="view-news-workspace" hidden>
+    <aside class="filters">
+      <div class="filter-group">
+        <label for="news-search">Search</label>
+        <input type="search" id="news-search" placeholder="Headline, keyword&hellip;" />
+      </div>
+      <div class="filter-group">
+        <label for="news-source-filter">Source</label>
+        <select id="news-source-filter">
+          <option value="all">All sources</option>
+          <option value="Nebraska Examiner">Nebraska Examiner</option>
+          <option value="Flatwater Free Press">Flatwater Free Press</option>
+        </select>
+      </div>
+    </aside>
+
+    <section class="bill-list-wrap">
+      <div id="news-list" class="news-list" aria-live="polite"></div>
+      <p id="news-empty-state" class="empty-state" hidden>No headlines match those filters.</p>
+    </section>
+  </section>
 </main>
 
 <div id="detail-overlay" class="detail-overlay" hidden>
@@ -125,7 +164,7 @@
 </div>
 
 <footer class="site-footer">
-  <p>Prototype. Bill data via <a href="https://legiscan.com/legiscan" target="_blank" rel="noopener">LegiScan</a>; senator data via <a href="https://nebraskalegislature.gov" target="_blank" rel="noopener">nebraskalegislature.gov</a>; sample data used as a fallback for either. Verify anything important against the official site.</p>
+  <p>Prototype. Bill data via <a href="https://legiscan.com/legiscan" target="_blank" rel="noopener">LegiScan</a>; senator data via <a href="https://nebraskalegislature.gov" target="_blank" rel="noopener">nebraskalegislature.gov</a>; constitutional office data hand-maintained and verified against nebraska.gov; news headlines via RSS from <a href="https://nebraskaexaminer.com" target="_blank" rel="noopener">Nebraska Examiner</a> and <a href="https://flatwaterfreepress.org" target="_blank" rel="noopener">Flatwater Free Press</a>. Sample data used as a fallback where noted. Verify anything important against the official site.</p>
 </footer>
 
 <script src="app.js"></script>
