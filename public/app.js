@@ -65,9 +65,9 @@ function formatDate(dateStr) {
 // ---------------------------------------------------------------------------
 
 function currentRoute() {
-  const hash = location.hash.replace(/^#\/?/, ""); // "senators/9" | "senators" | "bills" | ""
+  const hash = location.hash.replace(/^#\/?/, ""); // "senators/9" | "senators" | "bills" | "" | "news"
   const [view, id] = hash.split("/");
-  return { view: view || "bills", id: id || null };
+  return { view: view || "home", id: id || null };
 }
 
 function setActiveTab(view) {
@@ -78,6 +78,7 @@ function setActiveTab(view) {
 
 function showView(view) {
   const sections = {
+    home: ["view-home", "view-home-workspace"],
     bills: ["view-bills", "view-bills-workspace"],
     senators: ["view-senators", "view-senators-workspace"],
     offices: ["view-offices", "view-offices-workspace"],
@@ -117,6 +118,10 @@ function route() {
   if (view === "news") {
     if (allNews.length === 0) loadNews();
     else applyNewsFiltersAndRender();
+  }
+
+  if (view === "home") {
+    renderHome();
   }
 }
 
@@ -595,6 +600,83 @@ function renderNewsList(articles) {
 
 document.getElementById("news-search").addEventListener("input", applyNewsFiltersAndRender);
 document.getElementById("news-source-filter").addEventListener("change", applyNewsFiltersAndRender);
+
+// ---------------------------------------------------------------------------
+// Home
+// ---------------------------------------------------------------------------
+
+async function renderHome() {
+  const pending = [];
+  if (allBills.length === 0) pending.push(loadBills());
+  if (allSenators.length === 0) pending.push(loadSenators());
+  if (allOffices.length === 0) pending.push(loadOffices());
+  if (allNews.length === 0) pending.push(loadNews());
+  if (pending.length > 0) await Promise.all(pending);
+
+  const setStat = (key, value) => {
+    const el = document.querySelector(`[data-home-stat="${key}"]`);
+    if (el) el.textContent = value || "\u2013";
+  };
+  setStat("bills", allBills.length);
+  setStat("senators", allSenators.length);
+  setStat("offices", allOffices.length);
+  setStat("news", allNews.length);
+
+  renderHomeRecentBills();
+  renderHomeRecentNews();
+}
+
+function renderHomeRecentBills() {
+  const el = document.getElementById("home-recent-bills");
+  if (!el) return;
+  if (allBills.length === 0) {
+    el.innerHTML = `<p class="empty-state">No bills yet.</p>`;
+    return;
+  }
+  const recent = [...allBills]
+    .sort((a, b) => new Date(b.lastActionDate || 0) - new Date(a.lastActionDate || 0))
+    .slice(0, 4);
+
+  el.innerHTML = recent
+    .map(
+      (b) => `
+      <a href="#/bills" class="home-preview-item" data-bill-id="${b.id}">
+        <div class="home-preview-meta"><span>${b.number}</span><span>${formatDate(b.lastActionDate)}</span></div>
+        <p class="home-preview-title">${b.title}</p>
+      </a>
+    `
+    )
+    .join("");
+
+  el.querySelectorAll(".home-preview-item").forEach((item) => {
+    item.addEventListener("click", (e) => {
+      e.preventDefault();
+      location.hash = "#/bills";
+      openDetail(item.dataset.billId);
+    });
+  });
+}
+
+function renderHomeRecentNews() {
+  const el = document.getElementById("home-recent-news");
+  if (!el) return;
+  if (allNews.length === 0) {
+    el.innerHTML = `<p class="empty-state">No headlines yet.</p>`;
+    return;
+  }
+  const recent = allNews.slice(0, 4); // already sorted newest-first by the server
+
+  el.innerHTML = recent
+    .map(
+      (a) => `
+      <a href="${a.link}" target="_blank" rel="noopener" class="home-preview-item">
+        <div class="home-preview-meta"><span>${a.source}</span><span>${formatNewsDate(a.pubDate)}</span></div>
+        <p class="home-preview-title">${a.title}</p>
+      </a>
+    `
+    )
+    .join("");
+}
 
 // ---------------------------------------------------------------------------
 // Boot

@@ -13,7 +13,7 @@
 
 <header class="site-header">
   <div class="header-inner">
-    <div class="wordmark">
+    <a href="#/" class="wordmark">
       <svg class="tower-mark" viewBox="0 0 40 60" aria-hidden="true">
         <rect x="16" y="0" width="8" height="60" fill="currentColor"/>
         <rect x="8" y="46" width="24" height="14" fill="currentColor"/>
@@ -24,11 +24,12 @@
         <h1>K Street Chronicles</h1>
         <p class="wordmark-sub">Nebraska Unicameral, tracked</p>
       </div>
-    </div>
+    </a>
     <div class="source-pill" id="source-pill">Loading&hellip;</div>
   </div>
   <nav class="primary-nav">
     <div class="primary-nav-inner">
+      <a href="#/" class="nav-tab" data-view="home">Home</a>
       <a href="#/bills" class="nav-tab" data-view="bills">Bills</a>
       <a href="#/senators" class="nav-tab" data-view="senators">Senators</a>
       <a href="#/offices" class="nav-tab" data-view="offices">Offices</a>
@@ -38,7 +39,48 @@
 </header>
 
 <main>
-  <section class="hero" id="view-bills">
+  <section class="hero" id="view-home">
+    <h2>Everything Nebraska state government, in one place.</h2>
+    <p class="hero-sub">Track bills through the Unicameral, look up your senator, see who holds statewide office, and catch up on the news &mdash; all sourced from official records and Nebraska newsrooms.</p>
+  </section>
+
+  <section class="home-workspace" id="view-home-workspace">
+    <div class="home-grid" id="home-grid">
+      <a href="#/bills" class="home-card">
+        <span class="home-card-label">Bills</span>
+        <span class="home-card-stat" data-home-stat="bills">&ndash;</span>
+        <p class="home-card-desc">Every bill moving through the Legislature, with current status and sponsors.</p>
+      </a>
+      <a href="#/senators" class="home-card">
+        <span class="home-card-label">Senators</span>
+        <span class="home-card-stat" data-home-stat="senators">&ndash;</span>
+        <p class="home-card-desc">District, committees, and elected-year for all 49 members of the Unicameral.</p>
+      </a>
+      <a href="#/offices" class="home-card">
+        <span class="home-card-label">Offices</span>
+        <span class="home-card-stat" data-home-stat="offices">&ndash;</span>
+        <p class="home-card-desc">The six constitutional executive offices and who currently holds them.</p>
+      </a>
+      <a href="#/news" class="home-card">
+        <span class="home-card-label">News</span>
+        <span class="home-card-stat" data-home-stat="news">&ndash;</span>
+        <p class="home-card-desc">Headlines from Nebraska Examiner and Flatwater Free Press.</p>
+      </a>
+    </div>
+
+    <div class="home-columns">
+      <section class="home-column">
+        <h3>Recent bill activity</h3>
+        <div id="home-recent-bills" class="home-preview-list" aria-live="polite"></div>
+      </section>
+      <section class="home-column">
+        <h3>Latest headlines</h3>
+        <div id="home-recent-news" class="home-preview-list" aria-live="polite"></div>
+      </section>
+    </div>
+  </section>
+
+  <section class="hero" id="view-bills" hidden>
     <h2>Every bill moving through the Nebraska Legislature, in one place.</h2>
     <p class="hero-sub">Introduced, in committee, on the floor, or on the Governor's desk &mdash; pulled straight from the state's legislative record.</p>
     <div class="stat-strip" id="stat-strip" aria-live="polite">
@@ -49,7 +91,7 @@
     </div>
   </section>
 
-  <section class="workspace" id="view-bills-workspace">
+  <section class="workspace" id="view-bills-workspace" hidden>
     <aside class="filters">
       <div class="filter-group">
         <label for="search">Search</label>
