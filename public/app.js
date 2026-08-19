@@ -509,6 +509,7 @@ function renderOfficesGrid(offices) {
     .map(
       (o) => `
       <article class="office-card">
+        <img class="office-photo" src="${o.photoUrl}" alt="" loading="lazy" onerror="this.style.display='none'" />
         <div class="office-title">${o.title}</div>
         <h3 class="office-holder">${o.currentHolder}</h3>
         <p class="office-party">${o.party || ""}</p>

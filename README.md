@@ -1,4 +1,4 @@
-# K Street Chronicles — Nebraska Legislature Bill Tracker (prototype)
+# K Street Chronicle — Nebraska Legislature Bill Tracker (prototype)
 
 Tracks bills moving through the Nebraska Unicameral Legislature — status, committee,
 sponsors, and last action, pulled from the [LegiScan API](https://legiscan.com/legiscan) —

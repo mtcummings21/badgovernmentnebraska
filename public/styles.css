@@ -636,6 +636,16 @@ a { color: var(--prairie); }
   gap: 10px;
 }
 
+.office-photo {
+  width: 88px;
+  height: 88px;
+  border-radius: 8px;
+  object-fit: cover;
+  object-position: top center;
+  border: 1px solid var(--border);
+  background: var(--limestone);
+}
+
 .office-title {
   font-family: var(--font-mono);
   font-size: 11px;

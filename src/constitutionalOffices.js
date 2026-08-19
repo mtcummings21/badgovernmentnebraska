@@ -24,6 +24,7 @@ const constitutionalOffices = [
     duties:
       "Nebraska's chief executive: appoints agency heads, prepares the state budget, and can veto legislation (subject to override by the Unicameral).",
     officialUrl: "https://governor.nebraska.gov",
+    photoUrl: "https://governor.nebraska.gov/sites/default/files/img/JPillen%20-0048-2.jpg",
   },
   {
     id: "lieutenant-governor",
@@ -36,6 +37,7 @@ const constitutionalOffices = [
     duties:
       "Serves as president of the Legislature and assumes the Governor's powers and duties when the Governor is absent or incapacitated.",
     officialUrl: "https://ltgov.nebraska.gov",
+    photoUrl: "https://ltgov.nebraska.gov/sites/default/files/img/Lt%20Governor%20Kelly-1.jpg",
   },
   {
     id: "attorney-general",
@@ -48,6 +50,7 @@ const constitutionalOffices = [
     duties:
       "The state's chief legal officer: represents Nebraska in litigation, prosecutes certain state-level cases, and issues legal opinions to state agencies.",
     officialUrl: "https://ago.nebraska.gov",
+    photoUrl: "https://ago.nebraska.gov/sites/default/files/NZ8_3519_0.jpg",
   },
   {
     id: "secretary-of-state",
@@ -60,6 +63,9 @@ const constitutionalOffices = [
     duties:
       "Oversees elections and business registrations, keeps the Great Seal of Nebraska, and maintains official state records.",
     officialUrl: "https://sos.nebraska.gov",
+    photoUrl: "https://sos.nebraska.gov/sites/default/files/img/headshot-bio.jpg",
+    notes:
+      "Evnen lost his bid for a third term in the May 2026 Republican primary to Scott Petersen. He remains in office until January 2027; the November 2026 general election is between Petersen (R) and Sarah Slattery (D).",
   },
   {
     id: "state-treasurer",
@@ -72,6 +78,7 @@ const constitutionalOffices = [
     duties:
       "Safeguards and invests state funds; oversees the NEST 529 college savings program, unclaimed property, and child support disbursement.",
     officialUrl: "https://treasurer.nebraska.gov",
+    photoUrl: "https://treasurer.nebraska.gov/images/JoeySpellerberg_drkbkg_sq2.jpg",
     notes:
       "Appointed by Governor Pillen in November 2025 to fill a vacancy left by Tom Briese; running to keep the seat in the November 2026 election.",
   },
@@ -86,6 +93,7 @@ const constitutionalOffices = [
     duties:
       "Independently audits state agencies, counties, and school districts for compliance and financial accountability.",
     officialUrl: "https://auditors.nebraska.gov",
+    photoUrl: "https://auditors.nebraska.gov/img/headshot-foley.jpg",
   },
 ];
 
