@@ -18,7 +18,7 @@ const cheerio = require("cheerio");
 
 const BASE_URL = "https://nebraskalegislature.gov";
 const HEADERS = {
-  "User-Agent": "Mozilla/5.0 (compatible; LedgerNE/0.1; +https://github.com/mtcummings21/badgovernmentnebraska)",
+  "User-Agent": "Mozilla/5.0 (compatible; KStreetChroniclesNE/0.1; +https://github.com/mtcummings21/badgovernmentnebraska)",
 };
 
 async function getHtml(url) {

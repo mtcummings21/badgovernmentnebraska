@@ -381,13 +381,13 @@ async function openSenatorDetail(id) {
     const res = await fetch(`/api/senators/${id}`);
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "Unknown error");
-    renderSenatorDetail(data.senator, data.sponsoredBills || [], data.termInfo);
+    renderSenatorDetail(data.senator, data.termInfo);
   } catch (err) {
     body.innerHTML = `<p>Could not load this senator's details.</p>`;
   }
 }
 
-function renderSenatorDetail(s, sponsoredBills, info) {
+function renderSenatorDetail(s, info) {
   const body = document.getElementById("senator-detail-body");
 
   const committeesHtml =
@@ -399,34 +399,6 @@ function renderSenatorDetail(s, sponsoredBills, info) {
       : "";
 
   const contactBits = [s.phone, s.email].filter(Boolean).join(" &middot; ");
-
-  const priorityBills = sponsoredBills.filter((b) => b.priority);
-  const otherBills = sponsoredBills.filter((b) => !b.priority);
-
-  function billRow(b) {
-    return `
-      <div class="sponsored-bill-row" data-bill-id="${b.id}">
-        <span class="sponsored-bill-number">${b.number}</span>
-        <span class="sponsored-bill-title">${b.title}</span>
-        ${b.priority ? `<span class="priority-badge">Priority</span>` : ""}
-      </div>
-    `;
-  }
-
-  const sponsoredHtml =
-    sponsoredBills.length === 0
-      ? `<div class="detail-section"><h4>Sponsored Bills</h4><p>No sponsored bills found in the current bill set.</p></div>`
-      : `
-        ${
-          priorityBills.length
-            ? `<div class="detail-section"><h4>Priority Bills</h4><div class="plain-list">${priorityBills.map(billRow).join("")}</div></div>`
-            : ""
-        }
-        <div class="detail-section">
-          <h4>All Sponsored Bills</h4>
-          <div class="plain-list">${(priorityBills.length ? otherBills : sponsoredBills).map(billRow).join("")}</div>
-        </div>
-      `;
 
   body.innerHTML = `
     <div class="senator-detail-header">
@@ -453,21 +425,12 @@ function renderSenatorDetail(s, sponsoredBills, info) {
 
     ${s.bio ? `<div class="detail-section"><h4>Biography</h4><p>${s.bio}</p></div>` : ""}
 
-    ${sponsoredHtml}
-
     ${
       s.officialUrl
         ? `<a class="detail-link" href="${s.officialUrl}" target="_blank" rel="noopener">View official senator page &rarr;</a>`
         : ""
     }
   `;
-
-  body.querySelectorAll(".sponsored-bill-row").forEach((row) => {
-    row.addEventListener("click", () => {
-      closeSenatorDetail();
-      openDetail(row.dataset.billId);
-    });
-  });
 }
 
 function closeSenatorDetail() {

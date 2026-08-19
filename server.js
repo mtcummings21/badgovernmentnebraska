@@ -6,7 +6,6 @@ const { mockBills } = require("./src/mockData");
 const { fetchSenatorRoster, fetchSenatorDetail } = require("./src/senators");
 const { mockSenators } = require("./src/mockSenators");
 const { enrichSponsors } = require("./src/nameMatch");
-const { isPriority } = require("./src/priorityFlags");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -177,29 +176,10 @@ app.get("/api/senators/:id", async (req, res) => {
 
   if (!detail) return res.status(404).json({ error: "Senator not found." });
 
-  // Cross-reference this senator's sponsored bills from whatever bill source
-  // is currently active, so the profile stays in sync with the bill list.
-  const rosterList = roster.data;
-  const billSourceIsLive = Boolean(API_KEY) && listCache.data;
-  const billPool = billSourceIsLive ? listCache.data : mockBills;
-
-  const sponsoredBills = billPool
-    .map((b) => withSponsorLinks(b, rosterList))
-    .filter((b) => b.sponsors.some((s) => s.senatorId === id))
-    .map((b) => ({
-      id: b.id,
-      number: b.number,
-      title: b.title,
-      status: b.status,
-      statusLabel: b.statusLabel,
-      priority: isPriority(b.id),
-    }));
-
   res.json({
     source,
     termInfo: TERM_INFO,
     senator: detail,
-    sponsoredBills,
   });
 });
 

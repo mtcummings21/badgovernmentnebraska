@@ -44,6 +44,8 @@ a { color: var(--prairie); }
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px 20px;
 }
 
 .wordmark {
@@ -62,10 +64,11 @@ a { color: var(--prairie); }
 .wordmark h1 {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: 30px;
-  letter-spacing: 0.02em;
+  font-size: clamp(20px, 3.4vw, 30px);
+  letter-spacing: 0.01em;
   margin: 0;
-  line-height: 1;
+  line-height: 1.05;
+  white-space: nowrap;
 }
 
 .wordmark-sub {
@@ -418,44 +421,6 @@ a { color: var(--prairie); }
   display: flex;
   flex-direction: column;
   gap: 8px;
-}
-
-.sponsored-bill-row {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 8px 0;
-  border-bottom: 1px solid var(--border);
-  cursor: pointer;
-}
-
-.sponsored-bill-row:last-child { border-bottom: none; }
-
-.sponsored-bill-row:hover .sponsored-bill-title { color: var(--prairie); }
-
-.sponsored-bill-number {
-  font-family: var(--font-mono);
-  font-size: 12.5px;
-  color: var(--prairie);
-  flex-shrink: 0;
-}
-
-.sponsored-bill-title {
-  font-size: 13.5px;
-  flex: 1;
-}
-
-.priority-badge {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--sorghum);
-  border: 1px solid var(--sorghum);
-  border-radius: 10px;
-  padding: 2px 7px;
-  white-space: nowrap;
 }
 
 /* ---------- Detail overlay ---------- */
