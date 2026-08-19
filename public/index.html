@@ -27,10 +27,16 @@
     </div>
     <div class="source-pill" id="source-pill">Loading&hellip;</div>
   </div>
+  <nav class="primary-nav">
+    <div class="primary-nav-inner">
+      <a href="#/bills" class="nav-tab" data-view="bills">Bills</a>
+      <a href="#/senators" class="nav-tab" data-view="senators">Senators</a>
+    </div>
+  </nav>
 </header>
 
 <main>
-  <section class="hero">
+  <section class="hero" id="view-bills">
     <h2>Every bill moving through the Nebraska Legislature, in one place.</h2>
     <p class="hero-sub">Introduced, in committee, on the floor, or on the Governor's desk &mdash; pulled straight from the state's legislative record.</p>
     <div class="stat-strip" id="stat-strip" aria-live="polite">
@@ -41,7 +47,7 @@
     </div>
   </section>
 
-  <section class="workspace">
+  <section class="workspace" id="view-bills-workspace">
     <aside class="filters">
       <div class="filter-group">
         <label for="search">Search</label>
@@ -76,6 +82,32 @@
       <p id="empty-state" class="empty-state" hidden>No bills match those filters.</p>
     </section>
   </section>
+
+  <section class="hero" id="view-senators" hidden>
+    <h2>Every senator in the Unicameral, and what they're working on.</h2>
+    <p class="hero-sub" id="senator-term-blurb">District, committee assignments, and sponsored bills for all 49 senators.</p>
+  </section>
+
+  <section class="workspace" id="view-senators-workspace" hidden>
+    <aside class="filters">
+      <div class="filter-group">
+        <label for="senator-search">Search</label>
+        <input type="search" id="senator-search" placeholder="Name or district&hellip;" />
+      </div>
+      <div class="filter-group">
+        <label for="senator-sort">Sort by</label>
+        <select id="senator-sort">
+          <option value="district">District number</option>
+          <option value="name">Last name</option>
+        </select>
+      </div>
+    </aside>
+
+    <section class="bill-list-wrap">
+      <div id="senator-grid" class="senator-grid" aria-live="polite"></div>
+      <p id="senator-empty-state" class="empty-state" hidden>No senators match that search.</p>
+    </section>
+  </section>
 </main>
 
 <div id="detail-overlay" class="detail-overlay" hidden>
@@ -85,8 +117,15 @@
   </div>
 </div>
 
+<div id="senator-overlay" class="detail-overlay" hidden>
+  <div class="detail-panel" role="dialog" aria-modal="true" aria-labelledby="senator-detail-title">
+    <button id="senator-detail-close" class="detail-close" aria-label="Close senator detail">&times;</button>
+    <div id="senator-detail-body"></div>
+  </div>
+</div>
+
 <footer class="site-footer">
-  <p>Prototype. Data via <a href="https://legiscan.com/legiscan" target="_blank" rel="noopener">LegiScan</a> when configured, otherwise sample data. Verify anything important against <a href="https://nebraskalegislature.gov" target="_blank" rel="noopener">nebraskalegislature.gov</a>.</p>
+  <p>Prototype. Bill data via <a href="https://legiscan.com/legiscan" target="_blank" rel="noopener">LegiScan</a>; senator data via <a href="https://nebraskalegislature.gov" target="_blank" rel="noopener">nebraskalegislature.gov</a>; sample data used as a fallback for either. Verify anything important against the official site.</p>
 </footer>
 
 <script src="app.js"></script>

@@ -89,6 +89,41 @@ a { color: var(--prairie); }
 .source-pill.live { border-color: var(--gold); color: var(--gold-dim); }
 .source-pill.sample { border-color: var(--gold-dim); color: var(--gold-dim); }
 
+/* ---------- Primary nav ---------- */
+
+.primary-nav {
+  background: var(--prairie);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.primary-nav-inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 28px;
+  display: flex;
+  gap: 4px;
+}
+
+.nav-tab {
+  display: inline-block;
+  padding: 12px 4px;
+  margin-right: 24px;
+  color: var(--gold-dim);
+  text-decoration: none;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 2px solid transparent;
+}
+
+.nav-tab:hover { color: var(--limestone); }
+
+.nav-tab.active {
+  color: var(--limestone);
+  border-bottom-color: var(--gold);
+}
+
 /* ---------- Hero ---------- */
 
 .hero {
@@ -289,15 +324,155 @@ a { color: var(--prairie); }
   text-align: center;
 }
 
+/* ---------- Senator grid ---------- */
+
+.senator-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.senator-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.senator-card:hover,
+.senator-card:focus-visible {
+  border-color: var(--gold);
+  transform: translateY(-1px);
+}
+
+.senator-photo {
+  width: 52px;
+  height: 52px;
+  border-radius: 8px;
+  object-fit: cover;
+  background: var(--limestone);
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.senator-card-body { min-width: 0; }
+
+.senator-district {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.senator-name {
+  font-weight: 600;
+  font-size: 15px;
+  margin: 2px 0 4px;
+}
+
+.senator-committee-preview {
+  font-size: 12.5px;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Senator detail panel */
+
+.senator-detail-header {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.senator-detail-photo {
+  width: 84px;
+  height: 84px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  background: var(--limestone);
+  flex-shrink: 0;
+}
+
+.sponsor-link {
+  color: var(--prairie);
+  text-decoration: none;
+  border-bottom: 1px solid var(--border);
+}
+
+.sponsor-link:hover { border-bottom-color: var(--prairie); }
+
+.detail-section ul.plain-list {
+  list-style: none;
+  padding-left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sponsored-bill-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+}
+
+.sponsored-bill-row:last-child { border-bottom: none; }
+
+.sponsored-bill-row:hover .sponsored-bill-title { color: var(--prairie); }
+
+.sponsored-bill-number {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--prairie);
+  flex-shrink: 0;
+}
+
+.sponsored-bill-title {
+  font-size: 13.5px;
+  flex: 1;
+}
+
+.priority-badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--sorghum);
+  border: 1px solid var(--sorghum);
+  border-radius: 10px;
+  padding: 2px 7px;
+  white-space: nowrap;
+}
+
 /* ---------- Detail overlay ---------- */
 
 .detail-overlay {
   position: fixed;
   inset: 0;
   background: rgba(36, 33, 27, 0.55);
-  display: flex;
   justify-content: flex-end;
   z-index: 20;
+}
+
+.detail-overlay[hidden] {
+  display: none;
+}
+
+.detail-overlay:not([hidden]) {
+  display: flex;
 }
 
 .detail-panel {
@@ -390,6 +565,9 @@ a { color: var(--prairie); }
   .filter-group { flex: 1; min-width: 140px; }
   .stat-strip { flex-wrap: wrap; }
   .stat { flex: 1 1 45%; border-right: none; border-bottom: 1px solid var(--border); }
+  .primary-nav-inner { padding: 0 20px; }
+  .senator-grid { grid-template-columns: 1fr; }
+  .senator-detail-header { flex-direction: column; align-items: flex-start; }
 }
 
 @media (prefers-reduced-motion: reduce) {

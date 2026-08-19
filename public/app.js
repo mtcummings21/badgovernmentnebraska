@@ -24,6 +24,8 @@ const STAGE_LABELS = {
 };
 
 let allBills = [];
+let allSenators = [];
+let termInfo = null;
 
 function ladderInfo(status) {
   if (status === "vetoed") return { reachedIndex: 5, negative: true };
@@ -55,6 +57,57 @@ function formatDate(dateStr) {
   if (isNaN(d)) return dateStr;
   return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 }
+
+// ---------------------------------------------------------------------------
+// View routing (#/bills, #/senators, #/senators/:id)
+// ---------------------------------------------------------------------------
+
+function currentRoute() {
+  const hash = location.hash.replace(/^#\/?/, ""); // "senators/9" | "senators" | "bills" | ""
+  const [view, id] = hash.split("/");
+  return { view: view || "bills", id: id || null };
+}
+
+function setActiveTab(view) {
+  document.querySelectorAll(".nav-tab").forEach((tab) => {
+    tab.classList.toggle("active", tab.dataset.view === view);
+  });
+}
+
+function showView(view) {
+  const isBills = view === "senators" ? false : true;
+  document.getElementById("view-bills").hidden = !isBills;
+  document.getElementById("view-bills-workspace").hidden = !isBills;
+  document.getElementById("view-senators").hidden = isBills;
+  document.getElementById("view-senators-workspace").hidden = isBills;
+  setActiveTab(isBills ? "bills" : "senators");
+}
+
+function route() {
+  const { view, id } = currentRoute();
+  showView(view);
+
+  if (view === "senators") {
+    if (allSenators.length === 0) {
+      loadSenators().then(() => {
+        applySenatorFiltersAndRender();
+        if (id) openSenatorDetail(id);
+      });
+    } else {
+      applySenatorFiltersAndRender();
+      if (id) openSenatorDetail(id);
+      else closeSenatorDetail();
+    }
+  } else {
+    closeSenatorDetail();
+  }
+}
+
+window.addEventListener("hashchange", route);
+
+// ---------------------------------------------------------------------------
+// Bills
+// ---------------------------------------------------------------------------
 
 async function loadBills() {
   const listEl = document.getElementById("bill-list");
@@ -177,6 +230,22 @@ async function openDetail(id) {
   }
 }
 
+function renderSponsorList(sponsors) {
+  if (!sponsors || sponsors.length === 0) return "";
+  return `
+    <div class="detail-section">
+      <h4>Sponsors</h4>
+      <ul>${sponsors
+        .map((s) =>
+          s.senatorId
+            ? `<li><a class="sponsor-link" href="#/senators/${s.senatorId}">${s.name}</a></li>`
+            : `<li>${s.name}</li>`
+        )
+        .join("")}</ul>
+    </div>
+  `;
+}
+
 function renderDetail(b) {
   const body = document.getElementById("detail-body");
   body.innerHTML = `
@@ -189,14 +258,7 @@ function renderDetail(b) {
       <p>${b.description || "No summary available."}</p>
     </div>
 
-    ${
-      b.sponsors && b.sponsors.length
-        ? `<div class="detail-section">
-             <h4>Sponsors</h4>
-             <ul>${b.sponsors.map((s) => `<li>${s}</li>`).join("")}</ul>
-           </div>`
-        : ""
-    }
+    ${renderSponsorList(b.sponsors)}
 
     ${
       b.committee
@@ -225,12 +287,219 @@ document.getElementById("detail-close").addEventListener("click", closeDetail);
 document.getElementById("detail-overlay").addEventListener("click", (e) => {
   if (e.target.id === "detail-overlay") closeDetail();
 });
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") closeDetail();
-});
 
 document.getElementById("search").addEventListener("input", applyFiltersAndRender);
 document.getElementById("status-filter").addEventListener("change", applyFiltersAndRender);
 document.getElementById("sort-order").addEventListener("change", applyFiltersAndRender);
 
+// ---------------------------------------------------------------------------
+// Senators
+// ---------------------------------------------------------------------------
+
+async function loadSenators() {
+  const gridEl = document.getElementById("senator-grid");
+  gridEl.innerHTML = `<p class="empty-state">Loading senators&hellip;</p>`;
+
+  try {
+    const res = await fetch("/api/senators");
+    const data = await res.json();
+    allSenators = data.senators || [];
+    termInfo = data.termInfo || null;
+    if (termInfo) {
+      document.getElementById("senator-term-blurb").textContent =
+        `District, committee assignments, and sponsored bills for all ${termInfo.districts} senators. Each serves a ${termInfo.termLength}.`;
+    }
+  } catch (err) {
+    console.error("Falling back to nothing, backend unreachable:", err);
+    gridEl.innerHTML = `<p class="empty-state">Could not reach the server. Is it running?</p>`;
+  }
+}
+
+function applySenatorFiltersAndRender() {
+  const query = document.getElementById("senator-search").value.trim().toLowerCase();
+  const sortOrder = document.getElementById("senator-sort").value;
+
+  let filtered = allSenators.filter((s) => {
+    const haystack = `${s.fullName} ${s.lastName} ${s.district}`.toLowerCase();
+    return !query || haystack.includes(query);
+  });
+
+  filtered = filtered.sort((a, b) => {
+    if (sortOrder === "name") return (a.lastName || "").localeCompare(b.lastName || "");
+    return a.district - b.district;
+  });
+
+  renderSenatorGrid(filtered);
+}
+
+function renderSenatorGrid(senators) {
+  const gridEl = document.getElementById("senator-grid");
+  const emptyEl = document.getElementById("senator-empty-state");
+
+  if (senators.length === 0) {
+    gridEl.innerHTML = "";
+    emptyEl.hidden = false;
+    return;
+  }
+  emptyEl.hidden = true;
+
+  gridEl.innerHTML = senators
+    .map(
+      (s) => `
+      <article class="senator-card" tabindex="0" data-id="${s.id}">
+        <img class="senator-photo" src="${s.photoUrl}" alt="" loading="lazy" onerror="this.style.visibility='hidden'" />
+        <div class="senator-card-body">
+          <div class="senator-district">District ${s.district}</div>
+          <h3 class="senator-name">${s.fullName}</h3>
+          <p class="senator-committee-preview">${(s.committees && s.committees[0] && s.committees[0].name) || "\u2014"}</p>
+        </div>
+      </article>
+    `
+    )
+    .join("");
+
+  gridEl.querySelectorAll(".senator-card").forEach((card) => {
+    card.addEventListener("click", () => {
+      location.hash = `#/senators/${card.dataset.id}`;
+    });
+    card.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        location.hash = `#/senators/${card.dataset.id}`;
+      }
+    });
+  });
+}
+
+async function openSenatorDetail(id) {
+  const overlay = document.getElementById("senator-overlay");
+  const body = document.getElementById("senator-detail-body");
+  overlay.hidden = false;
+  body.innerHTML = `<p>Loading&hellip;</p>`;
+
+  try {
+    const res = await fetch(`/api/senators/${id}`);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Unknown error");
+    renderSenatorDetail(data.senator, data.sponsoredBills || [], data.termInfo);
+  } catch (err) {
+    body.innerHTML = `<p>Could not load this senator's details.</p>`;
+  }
+}
+
+function renderSenatorDetail(s, sponsoredBills, info) {
+  const body = document.getElementById("senator-detail-body");
+
+  const committeesHtml =
+    s.committees && s.committees.length
+      ? `<div class="detail-section">
+           <h4>Committee Assignments</h4>
+           <ul>${s.committees.map((c) => `<li>${c.name}${c.role && c.role !== "Member" ? ` &mdash; ${c.role}` : ""}</li>`).join("")}</ul>
+         </div>`
+      : "";
+
+  const contactBits = [s.phone, s.email].filter(Boolean).join(" &middot; ");
+
+  const priorityBills = sponsoredBills.filter((b) => b.priority);
+  const otherBills = sponsoredBills.filter((b) => !b.priority);
+
+  function billRow(b) {
+    return `
+      <div class="sponsored-bill-row" data-bill-id="${b.id}">
+        <span class="sponsored-bill-number">${b.number}</span>
+        <span class="sponsored-bill-title">${b.title}</span>
+        ${b.priority ? `<span class="priority-badge">Priority</span>` : ""}
+      </div>
+    `;
+  }
+
+  const sponsoredHtml =
+    sponsoredBills.length === 0
+      ? `<div class="detail-section"><h4>Sponsored Bills</h4><p>No sponsored bills found in the current bill set.</p></div>`
+      : `
+        ${
+          priorityBills.length
+            ? `<div class="detail-section"><h4>Priority Bills</h4><div class="plain-list">${priorityBills.map(billRow).join("")}</div></div>`
+            : ""
+        }
+        <div class="detail-section">
+          <h4>All Sponsored Bills</h4>
+          <div class="plain-list">${(priorityBills.length ? otherBills : sponsoredBills).map(billRow).join("")}</div>
+        </div>
+      `;
+
+  body.innerHTML = `
+    <div class="senator-detail-header">
+      <img class="senator-detail-photo" src="${s.photoUrl}" alt="" onerror="this.style.visibility='hidden'" />
+      <div>
+        <span class="detail-number">District ${s.district}</span>
+        <h3 style="margin: 4px 0 0;">${s.fullName}</h3>
+      </div>
+    </div>
+
+    ${
+      info
+        ? `<div class="detail-section"><h4>Term</h4><p>${info.termLength}. ${info.termLimit}</p></div>`
+        : ""
+    }
+
+    ${
+      contactBits
+        ? `<div class="detail-section"><h4>Contact</h4><p>${contactBits}</p></div>`
+        : ""
+    }
+
+    ${committeesHtml}
+
+    ${s.bio ? `<div class="detail-section"><h4>Biography</h4><p>${s.bio}</p></div>` : ""}
+
+    ${sponsoredHtml}
+
+    ${
+      s.officialUrl
+        ? `<a class="detail-link" href="${s.officialUrl}" target="_blank" rel="noopener">View official senator page &rarr;</a>`
+        : ""
+    }
+  `;
+
+  body.querySelectorAll(".sponsored-bill-row").forEach((row) => {
+    row.addEventListener("click", () => {
+      closeSenatorDetail();
+      openDetail(row.dataset.billId);
+    });
+  });
+}
+
+function closeSenatorDetail() {
+  const overlay = document.getElementById("senator-overlay");
+  if (overlay) overlay.hidden = true;
+}
+
+document.getElementById("senator-detail-close").addEventListener("click", () => {
+  closeSenatorDetail();
+  // Drop back to the plain senators list rather than leaving a dangling id in the URL.
+  if (currentRoute().view === "senators") location.hash = "#/senators";
+});
+document.getElementById("senator-overlay").addEventListener("click", (e) => {
+  if (e.target.id === "senator-overlay") {
+    closeSenatorDetail();
+    if (currentRoute().view === "senators") location.hash = "#/senators";
+  }
+});
+
+document.getElementById("senator-search").addEventListener("input", applySenatorFiltersAndRender);
+document.getElementById("senator-sort").addEventListener("change", applySenatorFiltersAndRender);
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    closeDetail();
+    closeSenatorDetail();
+  }
+});
+
+// ---------------------------------------------------------------------------
+// Boot
+// ---------------------------------------------------------------------------
+
 loadBills();
+route();

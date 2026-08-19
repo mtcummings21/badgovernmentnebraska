@@ -3,16 +3,37 @@ const express = require("express");
 const path = require("path");
 const { fetchBillList, fetchBillDetail } = require("./src/legiscan");
 const { mockBills } = require("./src/mockData");
+const { fetchSenatorRoster, fetchSenatorDetail } = require("./src/senators");
+const { mockSenators } = require("./src/mockSenators");
+const { enrichSponsors } = require("./src/nameMatch");
+const { isPriority } = require("./src/priorityFlags");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const API_KEY = process.env.LEGISCAN_API_KEY || "";
 
-// Simple in-memory cache so we don't hammer LegiScan on every page load.
-// LegiScan snapshots update weekly, so a short cache is plenty fresh.
-const CACHE_TTL_MS = 15 * 60 * 1000; // 15 minutes
+// Static facts about Nebraska Unicameral service terms -- these don't change
+// often enough to need a live source, and there isn't a clean API/scrape
+// target for them anyway. See nebraskalegislature.gov/senators/senators.php
+// and /feature/faq_senators.php.
+const TERM_INFO = {
+  termLength: "4-year term",
+  termLimit: "Term-limited after two consecutive terms, then must wait four years before running again.",
+  districts: 49,
+  salary: "$12,000 per year ($1,000/month), per the Nebraska Constitution",
+};
+
+// Bill data refreshes often during session (LegiScan's own snapshots update
+// weekly), so a short cache. Senator roster/bio data changes rarely -- mostly
+// at the start of a biennium -- so it gets a much longer one.
+const BILL_CACHE_TTL_MS = 15 * 60 * 1000; // 15 minutes
+const SENATOR_CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
+
 let listCache = { data: null, fetchedAt: 0 };
 const detailCache = new Map(); // billId -> { data, fetchedAt }
+
+let rosterCache = { data: null, fetchedAt: 0, source: null };
+const senatorDetailCache = new Map(); // senatorId -> { data, fetchedAt, source }
 
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -23,51 +44,139 @@ app.get("/api/status", (req, res) => {
   });
 });
 
+// ---------- Roster helper (shared by bill sponsor enrichment + senator routes) ----------
+
+async function getRoster() {
+  const fresh = rosterCache.data && Date.now() - rosterCache.fetchedAt < SENATOR_CACHE_TTL_MS;
+  if (fresh) return rosterCache;
+
+  try {
+    const data = await fetchSenatorRoster();
+    rosterCache = { data, fetchedAt: Date.now(), source: "official" };
+  } catch (err) {
+    console.error("Failed to scrape senator roster, falling back to sample data:", err.message);
+    rosterCache = { data: mockSenators, fetchedAt: Date.now(), source: "mock" };
+  }
+  return rosterCache;
+}
+
+function withSponsorLinks(bill, roster) {
+  return { ...bill, sponsors: enrichSponsors(bill.sponsors, roster) };
+}
+
+// ---------- Bills ----------
+
 app.get("/api/bills", async (req, res) => {
+  const roster = (await getRoster()).data;
+
   if (!API_KEY) {
-    return res.json({ source: "mock", bills: mockBills });
+    const bills = mockBills.map((b) => withSponsorLinks(b, roster));
+    return res.json({ source: "mock", bills });
   }
 
-  const fresh = listCache.data && Date.now() - listCache.fetchedAt < CACHE_TTL_MS;
+  const fresh = listCache.data && Date.now() - listCache.fetchedAt < BILL_CACHE_TTL_MS;
   if (fresh) {
-    return res.json({ source: "legiscan", bills: listCache.data });
+    return res.json({ source: "legiscan", bills: listCache.data.map((b) => withSponsorLinks(b, roster)) });
   }
 
   try {
     const bills = await fetchBillList(API_KEY);
     listCache = { data: bills, fetchedAt: Date.now() };
-    res.json({ source: "legiscan", bills });
+    res.json({ source: "legiscan", bills: bills.map((b) => withSponsorLinks(b, roster)) });
   } catch (err) {
     console.error("Failed to fetch from LegiScan, falling back to sample data:", err.message);
-    res.json({ source: "mock", bills: mockBills, warning: "LegiScan request failed; showing sample data." });
+    const bills = mockBills.map((b) => withSponsorLinks(b, roster));
+    res.json({ source: "mock", bills, warning: "LegiScan request failed; showing sample data." });
   }
 });
 
 app.get("/api/bills/:id", async (req, res) => {
   const { id } = req.params;
+  const roster = (await getRoster()).data;
 
   if (!API_KEY) {
     const bill = mockBills.find((b) => b.id === id);
     if (!bill) return res.status(404).json({ error: "Bill not found in sample data." });
-    return res.json({ source: "mock", bill });
+    return res.json({ source: "mock", bill: withSponsorLinks(bill, roster) });
   }
 
   const cached = detailCache.get(id);
-  if (cached && Date.now() - cached.fetchedAt < CACHE_TTL_MS) {
-    return res.json({ source: "legiscan", bill: cached.data });
+  if (cached && Date.now() - cached.fetchedAt < BILL_CACHE_TTL_MS) {
+    return res.json({ source: "legiscan", bill: withSponsorLinks(cached.data, roster) });
   }
 
   try {
     const bill = await fetchBillDetail(API_KEY, id);
     detailCache.set(id, { data: bill, fetchedAt: Date.now() });
-    res.json({ source: "legiscan", bill });
+    res.json({ source: "legiscan", bill: withSponsorLinks(bill, roster) });
   } catch (err) {
     console.error("Failed to fetch bill detail from LegiScan:", err.message);
     res.status(502).json({ error: "Could not reach LegiScan for this bill." });
   }
 });
 
+// ---------- Senators ----------
+
+app.get("/api/senators", async (req, res) => {
+  const roster = await getRoster();
+  res.json({ source: roster.source, termInfo: TERM_INFO, senators: roster.data });
+});
+
+app.get("/api/senators/:id", async (req, res) => {
+  const { id } = req.params;
+  const roster = await getRoster();
+
+  const cached = senatorDetailCache.get(id);
+  const fresh = cached && Date.now() - cached.fetchedAt < SENATOR_CACHE_TTL_MS;
+
+  let detail, source;
+  if (fresh) {
+    ({ data: detail, source } = cached);
+  } else if (roster.source === "mock") {
+    detail = mockSenators.find((s) => s.id === id) || null;
+    source = "mock";
+    if (detail) senatorDetailCache.set(id, { data: detail, source, fetchedAt: Date.now() });
+  } else {
+    try {
+      detail = await fetchSenatorDetail(id);
+      source = "official";
+      senatorDetailCache.set(id, { data: detail, source, fetchedAt: Date.now() });
+    } catch (err) {
+      console.error(`Failed to scrape senator detail for district ${id}, falling back to sample data:`, err.message);
+      detail = mockSenators.find((s) => s.id === id) || null;
+      source = "mock";
+    }
+  }
+
+  if (!detail) return res.status(404).json({ error: "Senator not found." });
+
+  // Cross-reference this senator's sponsored bills from whatever bill source
+  // is currently active, so the profile stays in sync with the bill list.
+  const rosterList = roster.data;
+  const billSourceIsLive = Boolean(API_KEY) && listCache.data;
+  const billPool = billSourceIsLive ? listCache.data : mockBills;
+
+  const sponsoredBills = billPool
+    .map((b) => withSponsorLinks(b, rosterList))
+    .filter((b) => b.sponsors.some((s) => s.senatorId === id))
+    .map((b) => ({
+      id: b.id,
+      number: b.number,
+      title: b.title,
+      status: b.status,
+      statusLabel: b.statusLabel,
+      priority: isPriority(b.id),
+    }));
+
+  res.json({
+    source,
+    termInfo: TERM_INFO,
+    senator: detail,
+    sponsoredBills,
+  });
+});
+
 app.listen(PORT, () => {
   console.log(`Nebraska Bill Tracker running at http://localhost:${PORT}`);
-  console.log(API_KEY ? "Using live LegiScan data." : "No LEGISCAN_API_KEY set — serving sample data.");
+  console.log(API_KEY ? "Using live LegiScan data." : "No LEGISCAN_API_KEY set -- serving sample data.");
 });
