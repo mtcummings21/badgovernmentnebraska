@@ -193,6 +193,15 @@ a { color: var(--prairie); }
   align-items: start;
 }
 
+/* .workspace sets display:grid unconditionally, which otherwise wins over
+   the browser's default `[hidden] { display: none }` rule at equal
+   specificity (author stylesheet loads after the UA one). This makes the
+   hidden attribute actually take effect when switching between the Bills
+   and Senators views. */
+.workspace[hidden] {
+  display: none;
+}
+
 .filters {
   position: sticky;
   top: 20px;
