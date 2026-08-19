@@ -9,6 +9,7 @@ const { constitutionalOffices } = require("./src/constitutionalOffices");
 const { fetchAllNews } = require("./src/news");
 const { mockNews } = require("./src/mockNews");
 const { enrichSponsors } = require("./src/nameMatch");
+const { partyForDistrict, partyLabel } = require("./src/senatorParty");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -149,9 +150,14 @@ app.get("/api/bills/:id", async (req, res) => {
 
 // ---------- Senators ----------
 
+function withParty(senator) {
+  const party = partyForDistrict(senator.district);
+  return { ...senator, party, partyLabel: partyLabel(party) };
+}
+
 app.get("/api/senators", async (req, res) => {
   const roster = await getRoster();
-  res.json({ source: roster.source, termInfo: TERM_INFO, senators: roster.data });
+  res.json({ source: roster.source, termInfo: TERM_INFO, senators: roster.data.map(withParty) });
 });
 
 app.get("/api/senators/:id", async (req, res) => {
@@ -185,7 +191,7 @@ app.get("/api/senators/:id", async (req, res) => {
   res.json({
     source,
     termInfo: TERM_INFO,
-    senator: detail,
+    senator: withParty(detail),
   });
 });
 

@@ -384,6 +384,22 @@ a { color: var(--prairie); }
   letter-spacing: 0.05em;
 }
 
+.party-badge {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border-radius: 4px;
+  padding: 1px 5px;
+  margin-left: 2px;
+  color: var(--surface);
+}
+
+.party-badge.party-R { background: var(--sorghum); }
+.party-badge.party-D { background: var(--prairie); }
+.party-badge.party-I { background: var(--gold); }
+
 .senator-name {
   font-weight: 600;
   font-size: 15px;

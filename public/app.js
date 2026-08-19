@@ -340,10 +340,13 @@ async function loadSenators() {
 function applySenatorFiltersAndRender() {
   const query = document.getElementById("senator-search").value.trim().toLowerCase();
   const sortOrder = document.getElementById("senator-sort").value;
+  const partyFilter = document.getElementById("senator-party-filter").value;
 
   let filtered = allSenators.filter((s) => {
     const haystack = `${s.fullName} ${s.lastName} ${s.district}`.toLowerCase();
-    return !query || haystack.includes(query);
+    const matchesQuery = !query || haystack.includes(query);
+    const matchesParty = partyFilter === "all" || s.party === partyFilter;
+    return matchesQuery && matchesParty;
   });
 
   filtered = filtered.sort((a, b) => {
@@ -352,6 +355,11 @@ function applySenatorFiltersAndRender() {
   });
 
   renderSenatorGrid(filtered);
+}
+
+function partyBadgeHtml(party) {
+  if (!party) return "";
+  return `<span class="party-badge party-${party}">${party}</span>`;
 }
 
 function renderSenatorGrid(senators) {
@@ -371,7 +379,7 @@ function renderSenatorGrid(senators) {
       <article class="senator-card" tabindex="0" data-id="${s.id}">
         <img class="senator-photo" src="${s.photoUrl}" alt="" loading="lazy" onerror="this.style.visibility='hidden'" />
         <div class="senator-card-body">
-          <div class="senator-district">District ${s.district}</div>
+          <div class="senator-district">District ${s.district} ${partyBadgeHtml(s.party)}</div>
           <h3 class="senator-name">${s.fullName}</h3>
           <p class="senator-elected">${s.electedYear ? `Elected ${s.electedYear}` : "Election year unavailable"}</p>
         </div>
@@ -426,8 +434,9 @@ function renderSenatorDetail(s, info) {
     <div class="senator-detail-header">
       <img class="senator-detail-photo" src="${s.photoUrl}" alt="" onerror="this.style.visibility='hidden'" />
       <div>
-        <span class="detail-number">District ${s.district}</span>
+        <span class="detail-number">District ${s.district} ${partyBadgeHtml(s.party)}</span>
         <h3 style="margin: 4px 0 0;">${s.fullName}</h3>
+        ${s.partyLabel ? `<p style="margin: 2px 0 0; color: var(--muted); font-size: 13px;">${s.partyLabel}</p>` : ""}
       </div>
     </div>
 
@@ -474,6 +483,7 @@ document.getElementById("senator-overlay").addEventListener("click", (e) => {
 
 document.getElementById("senator-search").addEventListener("input", applySenatorFiltersAndRender);
 document.getElementById("senator-sort").addEventListener("change", applySenatorFiltersAndRender);
+document.getElementById("senator-party-filter").addEventListener("change", applySenatorFiltersAndRender);
 
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") {
