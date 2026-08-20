@@ -403,7 +403,7 @@ function renderSeatMap(senators) {
 
   const total = senators.length;
   const majority = Math.floor(total / 2) + 1;
-  const { seats, outerRadius } = computeHemicycleLayout(total, 5, 68, 27);
+  const { seats, outerRadius } = computeHemicycleLayout(total, 5, 46, 18);
 
   // Assign colors in left-to-right order: Democratic, then Independent
   // (small, so it lands near the middle), then Republican.
@@ -413,12 +413,12 @@ function renderSeatMap(senators) {
     ...Array(counts.R).fill("R"),
   ];
 
-  const dotRadius = 7;
-  const pad = dotRadius + 6;
+  const dotRadius = 5;
+  const pad = dotRadius + 4;
   const viewW = outerRadius * 2 + pad * 2;
-  const viewH = outerRadius + pad + 26;
+  const viewH = outerRadius + pad + 18;
   const cx = viewW / 2;
-  const cyOffset = 26;
+  const cyOffset = 18;
 
   const dots = seats
     .map((seat, i) => {
