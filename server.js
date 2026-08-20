@@ -260,8 +260,9 @@ app.get("/api/committees", async (req, res) => {
 
   const resolve = (district) => {
     const senator = byDistrict.get(district);
-    if (!senator) return { id: String(district), district, fullName: `District ${district}`, photoUrl: null };
-    return { id: senator.id, district: senator.district, fullName: senator.fullName, photoUrl: senator.photoUrl };
+    const party = partyForDistrict(district);
+    if (!senator) return { id: String(district), district, fullName: `District ${district}`, photoUrl: null, party };
+    return { id: senator.id, district: senator.district, fullName: senator.fullName, photoUrl: senator.photoUrl, party };
   };
 
   const committees = standingCommittees.map((c) => ({

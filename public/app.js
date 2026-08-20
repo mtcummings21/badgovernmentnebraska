@@ -473,6 +473,7 @@ async function loadCommittees() {
 function committeeMemberLink(senator, isChair) {
   return `
     <li>
+      ${partyBadgeHtml(senator.party)}
       <a href="#/senators/${senator.id}">${senator.fullName}</a>
       ${isChair ? `<span class="committee-chair-tag">Chair</span>` : ""}
     </li>
