@@ -195,6 +195,56 @@ a { color: var(--prairie); }
   display: inline-block;
 }
 
+/* ---------- Committees ---------- */
+
+.committees-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+  margin-top: 4px;
+}
+
+.committee-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 18px;
+}
+
+.committee-name {
+  font-weight: 600;
+  font-size: 14.5px;
+  margin: 0 0 10px;
+}
+
+.committee-member-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.committee-member-list a {
+  color: inherit;
+  text-decoration: none;
+  font-size: 13px;
+}
+
+.committee-member-list a:hover {
+  color: var(--prairie);
+}
+
+.committee-chair-tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-left: 4px;
+}
+
 .stat-strip {
   display: flex;
   gap: 0;

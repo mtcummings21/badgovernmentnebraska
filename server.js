@@ -16,6 +16,7 @@ const {
 } = require("./src/elections2026");
 const { enrichSponsors } = require("./src/nameMatch");
 const { partyForDistrict, partyLabel } = require("./src/senatorParty");
+const { standingCommittees } = require("./src/committees");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -246,6 +247,30 @@ app.get("/api/elections", (req, res) => {
     statewideRaces,
     legislatureRaces,
   });
+});
+
+// ---------- Committees ----------
+
+// Hand-maintained -- see src/committees.js for sourcing and caveats.
+// District numbers are resolved against whatever senator roster is
+// currently active (live or mock), so names/photos stay in sync.
+app.get("/api/committees", async (req, res) => {
+  const roster = await getRoster();
+  const byDistrict = new Map(roster.data.map((s) => [s.district, s]));
+
+  const resolve = (district) => {
+    const senator = byDistrict.get(district);
+    if (!senator) return { id: String(district), district, fullName: `District ${district}`, photoUrl: null };
+    return { id: senator.id, district: senator.district, fullName: senator.fullName, photoUrl: senator.photoUrl };
+  };
+
+  const committees = standingCommittees.map((c) => ({
+    name: c.name,
+    chair: resolve(c.chairDistrict),
+    members: c.memberDistricts.map(resolve),
+  }));
+
+  res.json({ source: roster.source, committees });
 });
 
 app.listen(PORT, () => {

@@ -28,6 +28,7 @@ let allSenators = [];
 let allOffices = [];
 let allNews = [];
 let electionsLoaded = false;
+let committeesLoaded = false;
 let termInfo = null;
 
 function ladderInfo(status) {
@@ -109,6 +110,7 @@ function route() {
       if (id) openSenatorDetail(id);
       else closeSenatorDetail();
     }
+    if (!committeesLoaded) loadCommittees();
   } else {
     closeSenatorDetail();
   }
@@ -447,6 +449,63 @@ function renderSeatMap(senators) {
     .join("");
 
   container.innerHTML = `${svg}<div class="seat-map-legend">${legend}</div>`;
+}
+
+// ---------------------------------------------------------------------------
+// Standing Committees
+// ---------------------------------------------------------------------------
+
+async function loadCommittees() {
+  const el = document.getElementById("committees-grid");
+  el.innerHTML = `<p class="empty-state">Loading committees&hellip;</p>`;
+
+  try {
+    const res = await fetch("/api/committees");
+    const data = await res.json();
+    committeesLoaded = true;
+    renderCommittees(data.committees || []);
+  } catch (err) {
+    console.error("Falling back to nothing, backend unreachable:", err);
+    el.innerHTML = `<p class="empty-state">Could not reach the server. Is it running?</p>`;
+  }
+}
+
+function committeeMemberLink(senator, isChair) {
+  return `
+    <li>
+      <a href="#/senators/${senator.id}">${senator.fullName}</a>
+      ${isChair ? `<span class="committee-chair-tag">Chair</span>` : ""}
+    </li>
+  `;
+}
+
+function renderCommittees(committees) {
+  const el = document.getElementById("committees-grid");
+  if (committees.length === 0) {
+    el.innerHTML = `<p class="empty-state">No committee data available.</p>`;
+    return;
+  }
+
+  el.innerHTML = committees
+    .map(
+      (c) => `
+      <article class="committee-card">
+        <h4 class="committee-name">${c.name}</h4>
+        <ul class="committee-member-list">
+          ${committeeMemberLink(c.chair, true)}
+          ${c.members.map((m) => committeeMemberLink(m, false)).join("")}
+        </ul>
+      </article>
+    `
+    )
+    .join("");
+
+  el.querySelectorAll(".committee-member-list a").forEach((link) => {
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
+      location.hash = link.getAttribute("href");
+    });
+  });
 }
 
 function applySenatorFiltersAndRender() {
