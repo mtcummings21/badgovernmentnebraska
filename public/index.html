@@ -34,6 +34,7 @@
       <a href="#/senators" class="nav-tab" data-view="senators">Senators</a>
       <a href="#/offices" class="nav-tab" data-view="offices">State Officials</a>
       <a href="#/news" class="nav-tab" data-view="news">News</a>
+      <a href="#/elections" class="nav-tab" data-view="elections">2026 Election</a>
     </div>
   </nav>
 </header>
@@ -60,6 +61,11 @@
         <span class="home-card-label">News</span>
         <span class="home-card-stat" data-home-stat="news">&ndash;</span>
         <p class="home-card-desc">Headlines from Nebraska Examiner and Flatwater Free Press.</p>
+      </a>
+      <a href="#/elections" class="home-card">
+        <span class="home-card-label">2026 Election</span>
+        <span class="home-card-stat" data-home-stat="elections">30</span>
+        <p class="home-card-desc">Every statewide race and all 25 Legislature races, with candidates by party.</p>
       </a>
     </div>
 
@@ -192,6 +198,20 @@
       <div id="news-list" class="news-list" aria-live="polite"></div>
       <p id="news-empty-state" class="empty-state" hidden>No headlines match those filters.</p>
     </section>
+  </section>
+
+  <section class="hero" id="view-elections" hidden>
+    <h2>2026 Nebraska general election.</h2>
+    <p class="hero-sub" id="elections-hero-sub">Every statewide constitutional office and all 25 Nebraska Legislature races on the November ballot, with the candidates who advanced from the May primary.</p>
+  </section>
+
+  <section class="elections-workspace" id="view-elections-workspace" hidden>
+    <h3 class="elections-section-title">Statewide Offices</h3>
+    <div id="statewide-races" class="races-grid" aria-live="polite"></div>
+
+    <h3 class="elections-section-title">Nebraska Legislature</h3>
+    <p class="elections-note">Nebraska's Legislature uses a nonpartisan blanket primary &mdash; the top two vote-getters advance regardless of party, so some races below feature two candidates from the same party.</p>
+    <div id="legislature-races" class="races-grid races-grid-compact" aria-live="polite"></div>
   </section>
 </main>
 

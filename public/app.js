@@ -27,6 +27,7 @@ let allBills = [];
 let allSenators = [];
 let allOffices = [];
 let allNews = [];
+let electionsLoaded = false;
 let termInfo = null;
 
 function ladderInfo(status) {
@@ -83,6 +84,7 @@ function showView(view) {
     senators: ["view-senators", "view-senators-workspace"],
     offices: ["view-offices", "view-offices-workspace"],
     news: ["view-news", "view-news-workspace"],
+    elections: ["view-elections", "view-elections-workspace"],
   };
   Object.entries(sections).forEach(([name, ids]) => {
     ids.forEach((id) => {
@@ -122,6 +124,10 @@ function route() {
 
   if (view === "home") {
     renderHome();
+  }
+
+  if (view === "elections" && !electionsLoaded) {
+    loadElections();
   }
 }
 
@@ -686,6 +692,60 @@ function renderHomeRecentNews() {
       </a>
     `
     )
+    .join("");
+}
+
+// ---------------------------------------------------------------------------
+// 2026 Elections
+// ---------------------------------------------------------------------------
+
+async function loadElections() {
+  const statewideEl = document.getElementById("statewide-races");
+  const legEl = document.getElementById("legislature-races");
+  statewideEl.innerHTML = `<p class="empty-state">Loading&hellip;</p>`;
+  legEl.innerHTML = "";
+
+  try {
+    const res = await fetch("/api/elections");
+    const data = await res.json();
+    electionsLoaded = true;
+
+    document.getElementById(
+      "elections-hero-sub"
+    ).textContent = `Every statewide constitutional office and all 25 Nebraska Legislature races on the ${data.generalElectionDate} ballot, with the candidates who advanced from the ${data.primaryElectionDate} primary.`;
+
+    renderRaceCards(statewideEl, data.statewideRaces, false);
+    renderRaceCards(legEl, data.legislatureRaces, true);
+  } catch (err) {
+    console.error("Falling back to nothing, backend unreachable:", err);
+    statewideEl.innerHTML = `<p class="empty-state">Could not reach the server. Is it running?</p>`;
+  }
+}
+
+function raceCandidateHtml(c) {
+  return `
+    <div class="race-candidate">
+      ${partyBadgeHtml(c.party)}
+      <span class="race-candidate-name">${c.name}${c.incumbent ? " (incumbent)" : ""}</span>
+      ${c.partyLabel ? `<span class="race-candidate-running-mate">${c.partyLabel}</span>` : ""}
+      ${c.runningMate ? `<span class="race-candidate-running-mate">&amp; ${c.runningMate}</span>` : ""}
+    </div>
+  `;
+}
+
+function renderRaceCards(container, races, isLegislature) {
+  container.innerHTML = races
+    .map((race) => {
+      const title = isLegislature ? `District ${race.district}${race.special ? " (special)" : ""}` : race.office;
+      return `
+        <article class="race-card">
+          <span class="race-office">${title}</span>
+          ${race.seatNote ? `<p class="race-seat-note">${race.seatNote}</p>` : ""}
+          <div class="race-candidates">${race.candidates.map(raceCandidateHtml).join("")}</div>
+          ${race.note ? `<p class="race-note">${race.note}</p>` : ""}
+        </article>
+      `;
+    })
     .join("");
 }
 

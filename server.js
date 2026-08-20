@@ -8,6 +8,12 @@ const { mockSenators } = require("./src/mockSenators");
 const { constitutionalOffices } = require("./src/constitutionalOffices");
 const { fetchAllNews } = require("./src/news");
 const { mockNews } = require("./src/mockNews");
+const {
+  GENERAL_ELECTION_DATE,
+  PRIMARY_ELECTION_DATE,
+  statewideRaces,
+  legislatureRaces,
+} = require("./src/elections2026");
 const { enrichSponsors } = require("./src/nameMatch");
 const { partyForDistrict, partyLabel } = require("./src/senatorParty");
 
@@ -227,6 +233,18 @@ app.get("/api/offices", (req, res) => {
   res.json({
     offices: constitutionalOffices,
     note: "All six offices are on the ballot November 3, 2026; officeholders take office in January 2027.",
+  });
+});
+
+// ---------- 2026 elections ----------
+
+// Hand-maintained -- see src/elections2026.js for sourcing and caveats.
+app.get("/api/elections", (req, res) => {
+  res.json({
+    generalElectionDate: GENERAL_ELECTION_DATE,
+    primaryElectionDate: PRIMARY_ELECTION_DATE,
+    statewideRaces,
+    legislatureRaces,
   });
 });
 
