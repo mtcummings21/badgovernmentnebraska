@@ -337,10 +337,116 @@ async function loadSenators() {
       document.getElementById("senator-term-blurb").textContent =
         `District, committee assignments, and sponsored bills for all ${termInfo.districts} senators. Each serves a ${termInfo.termLength}.`;
     }
+    renderSeatMap(allSenators);
   } catch (err) {
     console.error("Falling back to nothing, backend unreachable:", err);
     gridEl.innerHTML = `<p class="empty-state">Could not reach the server. Is it running?</p>`;
   }
+}
+
+// ---------------------------------------------------------------------------
+// Seat map (hemicycle chart)
+// ---------------------------------------------------------------------------
+
+const PARTY_COLORS = { R: "#a13d2d", D: "#2f4858", I: "#b98a2d" };
+const PARTY_NAMES = { R: "Republican", D: "Democratic", I: "Independent" };
+
+/**
+ * Lays out `total` seats in concentric rows forming a hemicycle (dome shape,
+ * flat edge at the top, seats curving downward) -- the standard parliament-
+ * chart layout. Rows further from center hold more seats, proportional to
+ * their radius, so seat spacing stays roughly even across the whole arc.
+ */
+function computeHemicycleLayout(total, rows, innerRadius, rowGap) {
+  const radii = Array.from({ length: rows }, (_, i) => innerRadius + i * rowGap);
+  const totalRadius = radii.reduce((a, b) => a + b, 0);
+
+  let perRow = radii.map((r) => Math.round((r / totalRadius) * total));
+  let diff = total - perRow.reduce((a, b) => a + b, 0);
+  let idx = perRow.length - 1;
+  while (diff !== 0) {
+    if (diff > 0) {
+      perRow[idx]++;
+      diff--;
+    } else if (perRow[idx] > 0) {
+      perRow[idx]--;
+      diff++;
+    }
+    idx = (idx - 1 + perRow.length) % perRow.length;
+  }
+
+  const seats = [];
+  perRow.forEach((count, rowIndex) => {
+    const r = radii[rowIndex];
+    for (let s = 0; s < count; s++) {
+      const theta = count === 1 ? Math.PI / 2 : Math.PI - (s / (count - 1)) * Math.PI;
+      seats.push({ x: r * Math.cos(theta), y: r * Math.sin(theta), theta });
+    }
+  });
+
+  // Sort left-to-right (theta near PI = far left) so color blocks assigned
+  // sequentially form clean left/right party wedges rather than a jumble.
+  seats.sort((a, b) => b.theta - a.theta);
+  return { seats, outerRadius: radii[radii.length - 1] };
+}
+
+function renderSeatMap(senators) {
+  const container = document.getElementById("seat-map-container");
+  if (!container || senators.length === 0) return;
+
+  const counts = { R: 0, D: 0, I: 0 };
+  senators.forEach((s) => {
+    if (s.party && counts[s.party] !== undefined) counts[s.party]++;
+  });
+
+  const total = senators.length;
+  const majority = Math.floor(total / 2) + 1;
+  const { seats, outerRadius } = computeHemicycleLayout(total, 5, 68, 27);
+
+  // Assign colors in left-to-right order: Democratic, then Independent
+  // (small, so it lands near the middle), then Republican.
+  const order = [
+    ...Array(counts.D).fill("D"),
+    ...Array(counts.I).fill("I"),
+    ...Array(counts.R).fill("R"),
+  ];
+
+  const dotRadius = 7;
+  const pad = dotRadius + 6;
+  const viewW = outerRadius * 2 + pad * 2;
+  const viewH = outerRadius + pad + 26;
+  const cx = viewW / 2;
+  const cyOffset = 26;
+
+  const dots = seats
+    .map((seat, i) => {
+      const party = order[i] || "R";
+      const x = cx + seat.x;
+      const y = cyOffset + seat.y;
+      return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${dotRadius}" fill="${PARTY_COLORS[party]}" />`;
+    })
+    .join("");
+
+  const svg = `
+    <svg class="seat-map-svg" viewBox="0 0 ${viewW} ${viewH}" xmlns="http://www.w3.org/2000/svg">
+      <text x="${cx}" y="14" class="seat-map-label">${majority} needed for control</text>
+      ${dots}
+    </svg>
+  `;
+
+  const legend = Object.keys(PARTY_COLORS)
+    .filter((p) => counts[p] > 0)
+    .map(
+      (p) => `
+        <span class="seat-map-legend-item">
+          <span class="seat-map-legend-dot" style="background:${PARTY_COLORS[p]}"></span>
+          ${counts[p]} ${PARTY_NAMES[p]}
+        </span>
+      `
+    )
+    .join("");
+
+  container.innerHTML = `${svg}<div class="seat-map-legend">${legend}</div>`;
 }
 
 function applySenatorFiltersAndRender() {
@@ -726,7 +832,7 @@ function raceCandidateHtml(c) {
   return `
     <div class="race-candidate">
       ${partyBadgeHtml(c.party)}
-      <span class="race-candidate-name">${c.name}${c.incumbent ? " (incumbent)" : ""}</span>
+      <span class="race-candidate-name">${c.name}${c.incumbent ? "*" : ""}</span>
       ${c.partyLabel ? `<span class="race-candidate-running-mate">${c.partyLabel}</span>` : ""}
       ${c.runningMate ? `<span class="race-candidate-running-mate">&amp; ${c.runningMate}</span>` : ""}
     </div>
@@ -740,8 +846,8 @@ function renderRaceCards(container, races, isLegislature) {
       return `
         <article class="race-card">
           <span class="race-office">${title}</span>
-          ${race.seatNote ? `<p class="race-seat-note">${race.seatNote}</p>` : ""}
           <div class="race-candidates">${race.candidates.map(raceCandidateHtml).join("")}</div>
+          ${race.seatNote ? `<p class="race-seat-note">${race.seatNote}</p>` : ""}
           ${race.note ? `<p class="race-note">${race.note}</p>` : ""}
         </article>
       `;
