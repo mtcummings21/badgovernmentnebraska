@@ -800,9 +800,16 @@ a { color: var(--prairie); }
 
 .race-candidate {
   display: flex;
-  align-items: baseline;
-  gap: 8px;
+  flex-direction: column;
+  gap: 6px;
   font-size: 13.5px;
+}
+
+.race-candidate-header {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .race-candidate-name {
@@ -819,6 +826,85 @@ a { color: var(--prairie); }
   color: var(--muted);
   font-style: italic;
   margin-top: 2px;
+}
+
+/* ---------- Top donors (Governor race) ---------- */
+
+.race-candidate-with-donors {
+  padding-bottom: 10px;
+  border-bottom: 1px dashed var(--border);
+}
+
+.race-candidate-with-donors:last-child {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.race-candidate-donors {
+  margin-left: 20px;
+}
+
+.race-candidate-donors-summary {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  margin: 0 0 6px;
+}
+
+.race-candidate-donors-note {
+  display: block;
+  font-weight: 400;
+  font-style: italic;
+  margin-top: 2px;
+}
+
+.donor-lists {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.donor-list-label {
+  display: block;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.donor-list-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.donor-list-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.donor-name {
+  font-weight: 600;
+}
+
+.donor-location {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.donor-amount {
+  margin-left: auto;
+  font-weight: 600;
+  color: var(--gold);
 }
 
 /* ---------- Constitutional offices ---------- */
