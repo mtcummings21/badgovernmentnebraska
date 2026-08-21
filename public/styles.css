@@ -828,68 +828,130 @@ a { color: var(--prairie); }
   margin-top: 2px;
 }
 
-/* ---------- Top donors (Governor race) ---------- */
+/* ---------- Donor / campaign contributions link (Governor race card) ---------- */
 
-.race-candidate-with-donors {
-  padding-bottom: 10px;
-  border-bottom: 1px dashed var(--border);
+.race-donors-link {
+  display: inline-block;
+  margin-top: 6px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--sorghum);
+  text-decoration: none;
 }
 
-.race-candidate-with-donors:last-child {
-  padding-bottom: 0;
-  border-bottom: none;
+.race-donors-link:hover {
+  text-decoration: underline;
 }
 
-.race-candidate-donors {
-  margin-left: 20px;
-}
+/* ---------- Donor / campaign contributions page ---------- */
 
-.race-candidate-donors-summary {
-  font-size: 12px;
+.donors-back-link {
+  display: inline-block;
+  margin-bottom: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--muted);
-  margin: 0 0 6px;
+  text-decoration: none;
 }
 
-.race-candidate-donors-note {
-  display: block;
-  font-weight: 400;
-  font-style: italic;
-  margin-top: 2px;
+.donors-back-link:hover {
+  color: var(--ink);
 }
 
-.donor-lists {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 12px;
-}
-
-.donor-list-label {
-  display: block;
-  font-size: 10.5px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--muted);
-  margin-bottom: 4px;
-}
-
-.donor-list-items {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+.donors-workspace {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 28px 80px;
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 20px;
 }
 
-.donor-list-item {
+.donors-workspace[hidden] {
+  display: none;
+}
+
+.donors-candidates {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.donor-candidate-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.donor-candidate-header {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.donor-candidate-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 22px;
+  margin: 0;
+}
+
+.donor-candidate-summary {
+  font-size: 13.5px;
+  color: var(--muted);
+  margin: 0;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.donor-candidate-summary strong {
+  color: var(--ink);
+  font-size: 15px;
+}
+
+.donor-candidate-note {
+  display: block;
+  font-style: italic;
+  margin-top: 4px;
+}
+
+.donor-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.donor-column-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.donor-column-list {
+  list-style: decimal;
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.donor-row {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  gap: 4px;
-  font-size: 12px;
-  line-height: 1.35;
+  gap: 6px;
+  font-size: 13.5px;
 }
 
 .donor-name {
@@ -898,12 +960,12 @@ a { color: var(--prairie); }
 
 .donor-location {
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .donor-amount {
   margin-left: auto;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--gold);
 }
 
