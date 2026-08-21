@@ -1003,18 +1003,29 @@ function donorCandidateCardHtml(c) {
   `;
 }
 
+function donorRaceSectionHtml(race) {
+  return `
+    <section class="donor-race-section">
+      <h3 class="donor-race-title">${race.office}</h3>
+      <div class="donor-race-cards">
+        ${race.candidates.map(donorCandidateCardHtml).join("")}
+      </div>
+    </section>
+  `;
+}
+
 function renderDonorsPage() {
   const container = document.getElementById("donors-candidates");
   if (!electionsData) {
     container.innerHTML = `<p class="empty-state">Could not load donor data. Is the server running?</p>`;
     return;
   }
-  const govRace = electionsData.statewideRaces.find((r) => r.office.startsWith("Governor"));
-  if (!govRace) {
-    container.innerHTML = `<p class="empty-state">No governor's race data found.</p>`;
+  const racesWithDonors = electionsData.statewideRaces.filter((r) => r.candidates.some((c) => c.topDonors));
+  if (!racesWithDonors.length) {
+    container.innerHTML = `<p class="empty-state">No donor data found.</p>`;
     return;
   }
-  container.innerHTML = govRace.candidates.map(donorCandidateCardHtml).join("");
+  container.innerHTML = racesWithDonors.map(donorRaceSectionHtml).join("");
 }
 
 async function loadDonors() {
