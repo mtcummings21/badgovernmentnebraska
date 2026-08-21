@@ -19,7 +19,7 @@
 // by contrast, use separate partisan primaries. All results below are from
 // the May 12, 2026 primary; the general election is November 3, 2026.
 
-const { governorDonors } = require("./donors2026");
+const { candidateDonors } = require("./donors2026");
 
 const GENERAL_ELECTION_DATE = "November 3, 2026";
 const PRIMARY_ELECTION_DATE = "May 12, 2026";
@@ -27,7 +27,7 @@ const PRIMARY_ELECTION_DATE = "May 12, 2026";
 // Attach top-donor data (see donors2026.js) to a Governor candidate by name,
 // so it's a no-op for candidates who don't have a matching NADC committee.
 function withDonors(candidate) {
-  const donors = governorDonors[candidate.name];
+  const donors = candidateDonors[candidate.name];
   return donors ? { ...candidate, topDonors: donors } : candidate;
 }
 
@@ -47,7 +47,7 @@ const statewideRaces = [
     candidates: [
       { name: "Scott Petersen", party: "R" },
       { name: "Sarah Slattery", party: "D" },
-    ],
+    ].map(withDonors),
   },
   {
     office: "Attorney General",
@@ -55,7 +55,7 @@ const statewideRaces = [
     candidates: [
       { name: "Mike Hilgers", party: "R", incumbent: true },
       { name: "Jocelyn Brasher", party: "D" },
-    ],
+    ].map(withDonors),
   },
   {
     office: "State Treasurer",
