@@ -146,6 +146,12 @@ a { color: var(--prairie); }
   line-height: 1.05;
 }
 
+.hero h2.hero-title-wide {
+  max-width: 100%;
+  white-space: nowrap;
+  font-size: clamp(16px, 2.6vw, 32px);
+}
+
 .hero-sub {
   max-width: 56ch;
   color: var(--muted);
@@ -915,10 +921,10 @@ a { color: var(--prairie); }
   font-size: 15px;
 }
 
-.donor-candidate-note {
+.donor-candidate-stat {
   display: block;
-  font-style: italic;
   margin-top: 4px;
+  font-size: 12.5px;
 }
 
 .donor-columns {
@@ -948,14 +954,22 @@ a { color: var(--prairie); }
 
 .donor-row {
   display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 6px;
+  flex-direction: column;
+  gap: 1px;
   font-size: 13.5px;
+}
+
+.donor-row-main {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
 }
 
 .donor-name {
   font-weight: 600;
+  min-width: 0;
+  overflow-wrap: break-word;
 }
 
 .donor-location {
@@ -964,7 +978,8 @@ a { color: var(--prairie); }
 }
 
 .donor-amount {
-  margin-left: auto;
+  flex: 0 0 auto;
+  white-space: nowrap;
   font-weight: 700;
   color: var(--gold);
 }
