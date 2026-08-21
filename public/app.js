@@ -86,6 +86,7 @@ function showView(view) {
     offices: ["view-offices", "view-offices-workspace"],
     news: ["view-news", "view-news-workspace"],
     elections: ["view-elections", "view-elections-workspace"],
+    donors: ["view-donors", "view-donors-workspace"],
   };
   Object.entries(sections).forEach(([name, ids]) => {
     ids.forEach((id) => {
@@ -130,6 +131,10 @@ function route() {
 
   if (view === "elections" && !electionsLoaded) {
     loadElections();
+  }
+
+  if (view === "donors") {
+    loadDonors();
   }
 }
 
@@ -865,6 +870,8 @@ function renderHomeRecentNews() {
 // 2026 Elections
 // ---------------------------------------------------------------------------
 
+let electionsData = null;
+
 async function loadElections() {
   const statewideEl = document.getElementById("statewide-races");
   const legEl = document.getElementById("legislature-races");
@@ -874,6 +881,7 @@ async function loadElections() {
   try {
     const res = await fetch("/api/elections");
     const data = await res.json();
+    electionsData = data;
     electionsLoaded = true;
 
     document.getElementById(
@@ -888,58 +896,13 @@ async function loadElections() {
   }
 }
 
-function formatDonorAmount(amount) {
-  return `$${amount.toLocaleString("en-US")}`;
-}
-
-function donorListHtml(label, donors) {
-  if (!donors || !donors.length) return "";
-  return `
-    <div class="donor-list">
-      <span class="donor-list-label">${label}</span>
-      <ul class="donor-list-items">
-        ${donors
-          .map(
-            (d) => `
-          <li class="donor-list-item">
-            <span class="donor-name">${d.name}</span>
-            <span class="donor-location">${d.location}</span>
-            <span class="donor-amount">${formatDonorAmount(d.amount)}</span>
-          </li>
-        `
-          )
-          .join("")}
-      </ul>
-    </div>
-  `;
-}
-
-function topDonorsHtml(topDonors) {
-  if (!topDonors) return "";
-  return `
-    <div class="race-candidate-donors">
-      <p class="race-candidate-donors-summary">
-        Top donors &mdash; ${formatDonorAmount(topDonors.totalRaised)} raised total (${topDonors.asOf})
-        ${topDonors.note ? `<span class="race-candidate-donors-note">${topDonors.note}</span>` : ""}
-      </p>
-      <div class="donor-lists">
-        ${donorListHtml("Corporate", topDonors.corporate)}
-        ${donorListHtml("Individual", topDonors.individual)}
-      </div>
-    </div>
-  `;
-}
-
 function raceCandidateHtml(c) {
   return `
-    <div class="race-candidate${c.topDonors ? " race-candidate-with-donors" : ""}">
-      <div class="race-candidate-header">
-        ${partyBadgeHtml(c.party)}
-        <span class="race-candidate-name">${c.name}${c.incumbent ? "*" : ""}</span>
-        ${c.partyLabel ? `<span class="race-candidate-running-mate">${c.partyLabel}</span>` : ""}
-        ${c.runningMate ? `<span class="race-candidate-running-mate">&amp; ${c.runningMate}</span>` : ""}
-      </div>
-      ${topDonorsHtml(c.topDonors)}
+    <div class="race-candidate">
+      ${partyBadgeHtml(c.party)}
+      <span class="race-candidate-name">${c.name}${c.incumbent ? "*" : ""}</span>
+      ${c.partyLabel ? `<span class="race-candidate-running-mate">${c.partyLabel}</span>` : ""}
+      ${c.runningMate ? `<span class="race-candidate-running-mate">&amp; ${c.runningMate}</span>` : ""}
     </div>
   `;
 }
@@ -948,12 +911,14 @@ function renderRaceCards(container, races, isLegislature) {
   container.innerHTML = races
     .map((race) => {
       const title = isLegislature ? `District ${race.district}${race.special ? " (special)" : ""}` : race.office;
+      const hasDonorData = !isLegislature && race.candidates.some((c) => c.topDonors);
       return `
         <article class="race-card">
           <span class="race-office">${title}</span>
           <div class="race-candidates">${race.candidates.map(raceCandidateHtml).join("")}</div>
           ${race.seatNote ? `<p class="race-seat-note">${race.seatNote}</p>` : ""}
           ${race.note ? `<p class="race-note">${race.note}</p>` : ""}
+          ${hasDonorData ? `<a href="#/donors" class="race-donors-link">View donor/campaign contributions &rarr;</a>` : ""}
         </article>
       `;
     })
@@ -961,8 +926,91 @@ function renderRaceCards(container, races, isLegislature) {
 }
 
 // ---------------------------------------------------------------------------
-// Boot
+// Donor / campaign contributions
 // ---------------------------------------------------------------------------
+
+function formatDonorAmount(amount) {
+  return `$${amount.toLocaleString("en-US")}`;
+}
+
+function donorColumnHtml(label, donors) {
+  if (!donors || !donors.length) {
+    return `
+      <div class="donor-column">
+        <span class="donor-column-label">${label}</span>
+        <p class="empty-state">No itemized ${label.toLowerCase()} donors on file.</p>
+      </div>
+    `;
+  }
+  return `
+    <div class="donor-column">
+      <span class="donor-column-label">${label}</span>
+      <ol class="donor-column-list">
+        ${donors
+          .map(
+            (d) => `
+          <li class="donor-row">
+            <span class="donor-name">${d.name}</span>
+            <span class="donor-location">${d.location}</span>
+            <span class="donor-amount">${formatDonorAmount(d.amount)}</span>
+          </li>
+        `
+          )
+          .join("")}
+      </ol>
+    </div>
+  `;
+}
+
+function donorCandidateCardHtml(c) {
+  const td = c.topDonors;
+  return `
+    <article class="donor-candidate-card">
+      <div class="donor-candidate-header">
+        ${partyBadgeHtml(c.party)}
+        <h3 class="donor-candidate-name">${c.name}</h3>
+        ${c.incumbent ? `<span class="race-candidate-running-mate">Incumbent</span>` : ""}
+      </div>
+      ${
+        td
+          ? `
+        <p class="donor-candidate-summary">
+          <strong>${formatDonorAmount(td.totalRaised)}</strong> raised total &mdash; ${td.committeeName} (${td.asOf})
+          ${td.note ? `<span class="donor-candidate-note">${td.note}</span>` : ""}
+        </p>
+        <div class="donor-columns">
+          ${donorColumnHtml("Corporate", td.corporate)}
+          ${donorColumnHtml("Individual", td.individual)}
+        </div>
+      `
+          : `<p class="empty-state">No registered campaign committee on file with NADC &mdash; hasn't crossed the $5,000 reporting threshold.</p>`
+      }
+    </article>
+  `;
+}
+
+function renderDonorsPage() {
+  const container = document.getElementById("donors-candidates");
+  if (!electionsData) {
+    container.innerHTML = `<p class="empty-state">Could not load donor data. Is the server running?</p>`;
+    return;
+  }
+  const govRace = electionsData.statewideRaces.find((r) => r.office.startsWith("Governor"));
+  if (!govRace) {
+    container.innerHTML = `<p class="empty-state">No governor's race data found.</p>`;
+    return;
+  }
+  container.innerHTML = govRace.candidates.map(donorCandidateCardHtml).join("");
+}
+
+async function loadDonors() {
+  const container = document.getElementById("donors-candidates");
+  container.innerHTML = `<p class="empty-state">Loading&hellip;</p>`;
+  if (!electionsData) {
+    await loadElections();
+  }
+  renderDonorsPage();
+}
 
 loadBills();
 route();
