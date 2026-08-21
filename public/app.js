@@ -899,8 +899,10 @@ async function loadElections() {
 function raceCandidateHtml(c) {
   return `
     <div class="race-candidate">
-      ${partyBadgeHtml(c.party)}
-      <span class="race-candidate-name">${c.name}${c.incumbent ? "*" : ""}</span>
+      <div class="race-candidate-header">
+        ${partyBadgeHtml(c.party)}
+        <span class="race-candidate-name">${c.name}${c.incumbent ? "*" : ""}</span>
+      </div>
       ${c.partyLabel ? `<span class="race-candidate-running-mate">${c.partyLabel}</span>` : ""}
       ${c.runningMate ? `<span class="race-candidate-running-mate">&amp; ${c.runningMate}</span>` : ""}
     </div>
