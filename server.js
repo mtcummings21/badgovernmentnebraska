@@ -6,6 +6,7 @@ const { mockBills } = require("./src/mockData");
 const { fetchSenatorRoster, fetchSenatorDetail } = require("./src/senators");
 const { mockSenators } = require("./src/mockSenators");
 const { constitutionalOffices } = require("./src/constitutionalOffices");
+const { stateAgencies } = require("./src/stateAgencies");
 const { fetchAllNews } = require("./src/news");
 const { mockNews } = require("./src/mockNews");
 const {
@@ -247,6 +248,13 @@ app.get("/api/elections", (req, res) => {
     statewideRaces,
     legislatureRaces,
   });
+});
+
+// ---------- State agencies ----------
+
+// Hand-maintained -- see src/stateAgencies.js for sourcing and caveats.
+app.get("/api/agencies", (req, res) => {
+  res.json({ stateAgencies });
 });
 
 // ---------- Committees ----------
