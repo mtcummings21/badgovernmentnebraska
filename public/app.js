@@ -1047,7 +1047,10 @@ function agencyCategoryHtml(key, category) {
           .map(
             (a) => `
           <li class="agency-row">
-            <span class="agency-name">${a.name}</span>
+            <div class="agency-row-main">
+              <span class="agency-name">${a.name}</span>
+              ${a.url ? `<a class="agency-link" href="${a.url}" target="_blank" rel="noopener">Website &rarr;</a>` : ""}
+            </div>
             ${a.note ? `<span class="agency-note">${a.note}</span>` : ""}
           </li>
         `
