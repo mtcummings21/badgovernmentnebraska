@@ -874,6 +874,27 @@ a { color: var(--prairie); }
 .donors-candidates {
   display: flex;
   flex-direction: column;
+  gap: 36px;
+}
+
+.donor-race-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.donor-race-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 22px;
+  margin: 0;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--gold-dim);
+}
+
+.donor-race-cards {
+  display: flex;
+  flex-direction: column;
   gap: 20px;
 }
 
