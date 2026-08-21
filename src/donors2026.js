@@ -9,7 +9,12 @@
 // state's own "$250-or-less, not itemized" small-dollar aggregate line and
 // PAC/party-committee money (tracked separately, not shown here). Lists are
 // top 10 by dollar amount, or fewer where a candidate simply doesn't have
-// 10 distinct corporate donors on file (see Walz's corporate list).
+// 10 distinct corporate donors on file (Walz's corporate list has 7).
+//
+// individualDonorCount / individualAverage are computed across ALL itemized
+// individual contributions (not just the top 10 shown), excluding NADC's
+// lump-sum "$250-or-less" bucket -- there's no way to recover a donor count
+// from that bucket since NADC reports it as a single unitemized total.
 //
 // Committees matched: "Jim Pillen for Governor" and "Lynne Walz for Nebraska."
 // Rick Beard (Legal Marijuana Now) has no registered candidate committee in
@@ -29,6 +34,8 @@ const governorDonors = {
     committeeName: "Jim Pillen for Governor",
     totalRaised: 12927971,
     asOf: "2023\u20132026 NADC filings (cycle to date)",
+    individualDonorCount: 694,
+    individualAverage: 8403,
     corporate: [
       { name: "POET, LLC", location: "Sioux Falls, SD", amount: 300000 },
       { name: "Union Pacific Railroad Company", location: "Omaha, NE", amount: 285000 },
@@ -58,7 +65,8 @@ const governorDonors = {
     committeeName: "Lynne Walz for Nebraska",
     totalRaised: 1476123,
     asOf: "2023\u20132026 NADC filings (cycle to date)",
-    note: "Her committee has only 7 itemized corporate donors on file -- the list below is the complete set, not a top 10.",
+    individualDonorCount: 504,
+    individualAverage: 1795,
     corporate: [
       { name: "Mountain to Climb LLC", location: "Omaha, NE", amount: 45000 },
       { name: "Nebraska Groundswell", location: "Lincoln, NE", amount: 13551 },
