@@ -1,30 +1,38 @@
-// Top individual and corporate donors for the 2026 Nebraska governor's race.
+// Top individual and corporate donors for 2026 Nebraska statewide races
+// (Governor, Secretary of State, Attorney General).
 //
 // Hand-maintained, not scraped -- sourced directly from the Nebraska
 // Accountability and Disclosure Commission's (NADC) bulk contribution/loan
 // data exports (nadc-e.nebraska.gov/PublicSite/DataDownload.aspx), covering
-// the 2023-2026 filing years as extracted 8/14/2026. Figures are cycle-to-date
-// totals for each candidate's registered committee, aggregated by donor name
-// across all four years and ranked by total dollars given. Excludes the
-// state's own "$250-or-less, not itemized" small-dollar aggregate line and
-// PAC/party-committee money (tracked separately, not shown here). Lists are
-// top 10 by dollar amount, or fewer where a candidate simply doesn't have
-// 10 distinct corporate donors on file (Walz's corporate list has 7).
+// the 2023-2026 filing years as extracted 8/14/2026 (Governor race) and
+// 8/21/2026 (Secretary of State and Attorney General races). Figures are
+// cycle-to-date totals for each candidate's registered committee, aggregated
+// by donor name across all four years and ranked by total dollars given.
+// Excludes the state's own "$250-or-less, not itemized" small-dollar
+// aggregate line and PAC/party-committee money (tracked separately, not
+// shown here). Lists are top 10 by dollar amount, or fewer where a
+// candidate simply doesn't have 10 distinct donors on file in that category
+// (noted per-candidate below where that applies).
 //
 // individualDonorCount / individualAverage are computed across ALL itemized
 // individual contributions (not just the top 10 shown), excluding NADC's
 // lump-sum "$250-or-less" bucket -- there's no way to recover a donor count
 // from that bucket since NADC reports it as a single unitemized total.
 //
-// Committees matched: "Jim Pillen for Governor" and "Lynne Walz for Nebraska."
-// Rick Beard (Legal Marijuana Now) has no registered candidate committee in
-// NADC's system as of this extract, meaning he has not crossed the $5,000
-// reporting threshold -- so no donor data exists to show for him.
-//
-// Brett Lindstrom (independent) filed a committee ("Friends of Lindstrom")
-// and raised some money this cycle, but did not gather enough valid
-// petition signatures to qualify for the general election ballot -- he is
-// intentionally excluded here.
+// COMMITTEES MATCHED:
+// - Governor: "Jim Pillen for Governor," "Lynne Walz for Nebraska." Rick
+//   Beard (Legal Marijuana Now) has no registered committee -- hasn't
+//   crossed the $5,000 reporting threshold. Brett Lindstrom (independent)
+//   filed a committee ("Friends of Lindstrom") but didn't gather enough
+//   valid petition signatures to make the general-election ballot, so he's
+//   intentionally excluded.
+// - Secretary of State: "Petersen for Nebraska" (Scott Petersen) and
+//   "Slattery for Nebraska" (Sarah Slattery). Petersen also has an older,
+//   much smaller committee ("Friends of Scott Petersen," ~$2,000 raised in
+//   2025 only) that appears to predate this campaign -- excluded here in
+//   favor of his current, active committee.
+// - Attorney General: "Friends of Mike Hilgers" (Mike Hilgers) and
+//   "Brasher for NE AG" (Jocelyn Brasher).
 //
 // REVISIT: these are cycle-to-date snapshots, not final. Update after later
 // NADC filing deadlines as the general election nears.
@@ -91,4 +99,120 @@ const governorDonors = {
   },
 };
 
-module.exports = { governorDonors };
+const secretaryOfStateDonors = {
+  "Scott Petersen": {
+    committeeName: "Petersen for Nebraska",
+    totalRaised: 140304,
+    asOf: "2023\u20132026 NADC filings (cycle to date)",
+    individualDonorCount: 46,
+    individualAverage: 1469,
+    corporate: [
+      { name: "Penner Patient Care Inc", location: "Aurora, NE", amount: 1000 },
+      { name: "Printco Graphics", location: "Omaha, NE", amount: 1000 },
+      { name: "Pinnacle Bank", location: "Lincoln, NE", amount: 250 },
+    ],
+    individual: [
+      { name: "Mike Moran", location: "Omaha, NE", amount: 20000 },
+      { name: "Sam Sampson", location: "Lincoln, NE", amount: 16750 },
+      { name: "Perry Petersen", location: "Omaha, NE", amount: 5000 },
+      { name: "Mike Faust", location: "Omaha, NE", amount: 2000 },
+      { name: "Berniece Grewcock", location: "Omaha, NE", amount: 2000 },
+      { name: "Leo Eledge", location: "Omaha, NE", amount: 1000 },
+      { name: "Richard Smith", location: "Omaha, NE", amount: 1000 },
+      { name: "Matt Murphy", location: "Omaha, NE", amount: 1000 },
+      { name: "Ann Francis", location: "Omaha, NE", amount: 1000 },
+      { name: "Carole Julian", location: "Omaha, NE", amount: 1000 },
+    ],
+  },
+  "Sarah Slattery": {
+    committeeName: "Slattery for Nebraska",
+    totalRaised: 38567,
+    asOf: "2023\u20132026 NADC filings (cycle to date)",
+    individualDonorCount: 127,
+    individualAverage: 187,
+    corporate: [
+      { name: "Planned Parenthood Advocates of Nebraska", location: "Lincoln, NE", amount: 3352 },
+      { name: "Warhorse Gaming", location: "Winnebago, NE", amount: 2500 },
+    ],
+    individual: [
+      { name: "Elizabeth Constance", location: "Omaha, NE", amount: 5000 },
+      { name: "Rick Vest", location: "Lincoln, NE", amount: 2500 },
+      { name: "Katie Weitz", location: "Omaha, NE", amount: 2500 },
+      { name: "Mary Fischer", location: "Lincoln, NE", amount: 1500 },
+      { name: "Jane Kleeb", location: "Hastings, NE", amount: 1000 },
+      { name: "Megan Hull", location: "Oakland, CA", amount: 1000 },
+      { name: "Ann Trullinger", location: "Gothenburg, NE", amount: 632 },
+      { name: "Teresa Lorensen", location: "Avoca, NE", amount: 500 },
+      { name: "Kathleen Thuman", location: "Lincoln, NE", amount: 500 },
+      { name: "Sharlette Schwenninger", location: "Elwood, NE", amount: 450 },
+    ],
+  },
+};
+
+const attorneyGeneralDonors = {
+  "Mike Hilgers": {
+    committeeName: "Friends of Mike Hilgers",
+    totalRaised: 1966935,
+    asOf: "2023\u20132026 NADC filings (cycle to date)",
+    individualDonorCount: 124,
+    individualAverage: 3560,
+    corporate: [
+      { name: "Reynolds American Inc. / RAI Services", location: "Winston-Salem, NC", amount: 95000 },
+      { name: "The Hurst Group LLC", location: "Jackson, MS", amount: 60000 },
+      { name: "KAAPA Ethanol Holdings, LLC", location: "Kearney, NE", amount: 47500 },
+      { name: "Stonebrook Exterior", location: "Lincoln, NE", amount: 40000 },
+      { name: "Altria Client Services, Inc.", location: "Richmond, VA", amount: 36000 },
+      { name: "Anheuser-Busch Companies", location: "St. Louis, MO", amount: 32500 },
+      { name: "SidePrize LLC and Affiliates (d/b/a PrizePicks)", location: "Atlanta, GA", amount: 30000 },
+      { name: "FanDuel Inc", location: "New York, NY", amount: 27500 },
+      { name: "Hawkins Construction Company", location: "Omaha, NE", amount: 25000 },
+      { name: "Nomi Health, Inc", location: "Orem, UT", amount: 25000 },
+    ],
+    individual: [
+      { name: "Miriam Adelson", location: "Las Vegas, NV", amount: 75000 },
+      { name: "Jeremy Lieberman", location: "New York, NY", amount: 22138 },
+      { name: "Stacie Stern", location: "Brooklyn, NY", amount: 20000 },
+      { name: "Tonn Ostergard", location: "Lincoln, NE", amount: 20000 },
+      { name: "Thomas (Tom) Peed", location: "Lincoln, NE", amount: 20000 },
+      { name: "Shawn Peed", location: "Lincoln, NE", amount: 20000 },
+      { name: "Michael Cassling", location: "Omaha, NE", amount: 15000 },
+      { name: "Adam Piper", location: "Raleigh, NC", amount: 10000 },
+      { name: "William Austin", location: "Brownsville, TX", amount: 10000 },
+      { name: "Tani Dru Austin", location: "Brownsville, TX", amount: 10000 },
+    ],
+  },
+  "Jocelyn Brasher": {
+    committeeName: "Brasher for NE AG",
+    totalRaised: 177182,
+    asOf: "2023\u20132026 NADC filings (cycle to date)",
+    individualDonorCount: 48,
+    individualAverage: 2407,
+    corporate: [
+      { name: "Groundswell", location: "Lincoln, NE", amount: 13317 },
+      { name: "Nebraska Groundswell", location: "Lincoln, NE", amount: 1000 },
+    ],
+    individual: [
+      { name: "Barbara Weitz", location: "Omaha, NE", amount: 50000 },
+      { name: "Dianne Lozier", location: "Omaha, NE", amount: 10000 },
+      { name: "Dolores Brady", location: "Omaha, NE", amount: 5000 },
+      { name: "Harley Schrager", location: "Omaha, NE", amount: 5000 },
+      { name: "Beth Eliason", location: "Yutan, NE", amount: 5000 },
+      { name: "Ronald Streck", location: "Vero Beach, FL", amount: 5000 },
+      { name: "Elizabeth Constance", location: "Omaha, NE", amount: 5000 },
+      { name: "Katie Weitz", location: "Omaha, NE", amount: 3628 },
+      { name: "Daniel Wintz", location: "Papillion, NE", amount: 1500 },
+      { name: "Edith Peebles", location: "Omaha, NE", amount: 1500 },
+    ],
+  },
+};
+
+// Merged lookup, keyed by candidate name -- this is what elections2026.js
+// actually reads from. Candidate names are unique across these three races,
+// so a flat merge is safe.
+const candidateDonors = {
+  ...governorDonors,
+  ...secretaryOfStateDonors,
+  ...attorneyGeneralDonors,
+};
+
+module.exports = { governorDonors, secretaryOfStateDonors, attorneyGeneralDonors, candidateDonors };
