@@ -407,7 +407,6 @@ function renderSeatMap(senators) {
   });
 
   const total = senators.length;
-  const majority = Math.floor(total / 2) + 1;
   const { seats, outerRadius } = computeHemicycleLayout(total, 5, 46, 18);
 
   // Assign colors in left-to-right order: Democratic, then Independent
@@ -421,9 +420,9 @@ function renderSeatMap(senators) {
   const dotRadius = 5;
   const pad = dotRadius + 4;
   const viewW = outerRadius * 2 + pad * 2;
-  const viewH = outerRadius + pad + 18;
+  const viewH = outerRadius + pad;
   const cx = viewW / 2;
-  const cyOffset = 18;
+  const cyOffset = 0;
 
   const dots = seats
     .map((seat, i) => {
@@ -436,7 +435,6 @@ function renderSeatMap(senators) {
 
   const svg = `
     <svg class="seat-map-svg" viewBox="0 0 ${viewW} ${viewH}" xmlns="http://www.w3.org/2000/svg">
-      <text x="${cx}" y="14" class="seat-map-label">${majority} needed for control</text>
       ${dots}
     </svg>
   `;
