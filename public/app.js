@@ -952,9 +952,11 @@ function donorColumnHtml(label, donors) {
           .map(
             (d) => `
           <li class="donor-row">
-            <span class="donor-name">${d.name}</span>
+            <div class="donor-row-main">
+              <span class="donor-name">${d.name}</span>
+              <span class="donor-amount">${formatDonorAmount(d.amount)}</span>
+            </div>
             <span class="donor-location">${d.location}</span>
-            <span class="donor-amount">${formatDonorAmount(d.amount)}</span>
           </li>
         `
           )
@@ -977,8 +979,14 @@ function donorCandidateCardHtml(c) {
         td
           ? `
         <p class="donor-candidate-summary">
-          <strong>${formatDonorAmount(td.totalRaised)}</strong> raised total &mdash; ${td.committeeName} (${td.asOf})
-          ${td.note ? `<span class="donor-candidate-note">${td.note}</span>` : ""}
+          <strong>${formatDonorAmount(td.totalRaised)}</strong> raised
+          ${
+            td.individualDonorCount
+              ? `<span class="donor-candidate-stat">${td.individualDonorCount.toLocaleString(
+                  "en-US"
+                )} individual donors &middot; ${formatDonorAmount(td.individualAverage)} average contribution</span>`
+              : ""
+          }
         </p>
         <div class="donor-columns">
           ${donorColumnHtml("Corporate", td.corporate)}
