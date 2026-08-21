@@ -888,13 +888,58 @@ async function loadElections() {
   }
 }
 
+function formatDonorAmount(amount) {
+  return `$${amount.toLocaleString("en-US")}`;
+}
+
+function donorListHtml(label, donors) {
+  if (!donors || !donors.length) return "";
+  return `
+    <div class="donor-list">
+      <span class="donor-list-label">${label}</span>
+      <ul class="donor-list-items">
+        ${donors
+          .map(
+            (d) => `
+          <li class="donor-list-item">
+            <span class="donor-name">${d.name}</span>
+            <span class="donor-location">${d.location}</span>
+            <span class="donor-amount">${formatDonorAmount(d.amount)}</span>
+          </li>
+        `
+          )
+          .join("")}
+      </ul>
+    </div>
+  `;
+}
+
+function topDonorsHtml(topDonors) {
+  if (!topDonors) return "";
+  return `
+    <div class="race-candidate-donors">
+      <p class="race-candidate-donors-summary">
+        Top donors &mdash; ${formatDonorAmount(topDonors.totalRaised)} raised total (${topDonors.asOf})
+        ${topDonors.note ? `<span class="race-candidate-donors-note">${topDonors.note}</span>` : ""}
+      </p>
+      <div class="donor-lists">
+        ${donorListHtml("Corporate", topDonors.corporate)}
+        ${donorListHtml("Individual", topDonors.individual)}
+      </div>
+    </div>
+  `;
+}
+
 function raceCandidateHtml(c) {
   return `
-    <div class="race-candidate">
-      ${partyBadgeHtml(c.party)}
-      <span class="race-candidate-name">${c.name}${c.incumbent ? "*" : ""}</span>
-      ${c.partyLabel ? `<span class="race-candidate-running-mate">${c.partyLabel}</span>` : ""}
-      ${c.runningMate ? `<span class="race-candidate-running-mate">&amp; ${c.runningMate}</span>` : ""}
+    <div class="race-candidate${c.topDonors ? " race-candidate-with-donors" : ""}">
+      <div class="race-candidate-header">
+        ${partyBadgeHtml(c.party)}
+        <span class="race-candidate-name">${c.name}${c.incumbent ? "*" : ""}</span>
+        ${c.partyLabel ? `<span class="race-candidate-running-mate">${c.partyLabel}</span>` : ""}
+        ${c.runningMate ? `<span class="race-candidate-running-mate">&amp; ${c.runningMate}</span>` : ""}
+      </div>
+      ${topDonorsHtml(c.topDonors)}
     </div>
   `;
 }
