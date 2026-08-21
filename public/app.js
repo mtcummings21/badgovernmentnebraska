@@ -28,6 +28,7 @@ let allSenators = [];
 let allOffices = [];
 let allNews = [];
 let electionsLoaded = false;
+let agenciesLoaded = false;
 let committeesLoaded = false;
 let termInfo = null;
 
@@ -87,6 +88,7 @@ function showView(view) {
     news: ["view-news", "view-news-workspace"],
     elections: ["view-elections", "view-elections-workspace"],
     donors: ["view-donors", "view-donors-workspace"],
+    agencies: ["view-agencies", "view-agencies-workspace"],
   };
   Object.entries(sections).forEach(([name, ids]) => {
     ids.forEach((id) => {
@@ -135,6 +137,10 @@ function route() {
 
   if (view === "donors") {
     loadDonors();
+  }
+
+  if (view === "agencies" && !agenciesLoaded) {
+    loadAgencies();
   }
 }
 
@@ -1018,6 +1024,63 @@ async function loadDonors() {
     await loadElections();
   }
   renderDonorsPage();
+}
+
+// ---------------------------------------------------------------------------
+// State agencies
+// ---------------------------------------------------------------------------
+
+const AGENCY_CATEGORY_LABELS = {
+  constitutional: "Constitutional Agencies",
+  code: "Code Agencies",
+  noncode: "Noncode Agencies",
+};
+
+function agencyCategoryHtml(key, category) {
+  const label = AGENCY_CATEGORY_LABELS[key] || key;
+  return `
+    <div class="agency-category">
+      <h3 class="agency-category-title">${label} <span class="agency-category-count">${category.agencies.length}</span></h3>
+      <p class="agency-category-description">${category.description}</p>
+      <ul class="agency-list">
+        ${category.agencies
+          .map(
+            (a) => `
+          <li class="agency-row">
+            <span class="agency-name">${a.name}</span>
+            ${a.note ? `<span class="agency-note">${a.note}</span>` : ""}
+          </li>
+        `
+          )
+          .join("")}
+      </ul>
+    </div>
+  `;
+}
+
+function renderAgenciesPage(stateAgencies) {
+  const container = document.getElementById("agencies-categories");
+  if (!stateAgencies) {
+    container.innerHTML = `<p class="empty-state">Could not load agency data. Is the server running?</p>`;
+    return;
+  }
+  container.innerHTML = ["constitutional", "code", "noncode"]
+    .map((key) => agencyCategoryHtml(key, stateAgencies[key]))
+    .join("");
+}
+
+async function loadAgencies() {
+  const container = document.getElementById("agencies-categories");
+  container.innerHTML = `<p class="empty-state">Loading&hellip;</p>`;
+  try {
+    const res = await fetch("/api/agencies");
+    const data = await res.json();
+    agenciesLoaded = true;
+    renderAgenciesPage(data.stateAgencies);
+  } catch (err) {
+    console.error("Could not load agencies, backend unreachable:", err);
+    container.innerHTML = `<p class="empty-state">Could not reach the server. Is it running?</p>`;
+  }
 }
 
 loadBills();
