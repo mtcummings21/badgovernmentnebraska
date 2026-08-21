@@ -1173,6 +1173,89 @@ a { color: var(--prairie); }
   color: var(--muted);
 }
 
+/* ---------- State agencies ---------- */
+
+.agencies-workspace {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 28px 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.agencies-workspace[hidden] {
+  display: none;
+}
+
+.agencies-categories {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.agency-category {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 22px 24px;
+}
+
+.agency-category-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+  margin: 0 0 6px;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.agency-category-count {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  background: var(--limestone);
+  border-radius: 10px;
+  padding: 1px 8px;
+}
+
+.agency-category-description {
+  font-size: 13.5px;
+  color: var(--muted);
+  margin: 0 0 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.agency-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  columns: 2;
+  column-gap: 32px;
+}
+
+.agency-row {
+  break-inside: avoid;
+  display: flex;
+  flex-direction: column;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13.5px;
+}
+
+.agency-name {
+  font-weight: 600;
+}
+
+.agency-note {
+  color: var(--muted);
+  font-size: 11.5px;
+  font-family: var(--font-mono);
+}
+
 /* ---------- Responsive ---------- */
 
 @media (max-width: 760px) {
@@ -1186,6 +1269,7 @@ a { color: var(--prairie); }
   .senator-detail-header { flex-direction: column; align-items: flex-start; }
   .home-columns { grid-template-columns: 1fr; gap: 28px; }
   .hero h2 { white-space: normal; font-size: clamp(22px, 6vw, 32px); }
+  .agency-list { columns: 1; }
 }
 
 @media (prefers-reduced-motion: reduce) {
