@@ -20,6 +20,12 @@
 // lump-sum "$250-or-less" bucket -- there's no way to recover a donor count
 // from that bucket since NADC reports it as a single unitemized total.
 //
+// geography.{individual,corporate} splits ALL itemized contributions in
+// that category (again, not just the top 10) into Nebraska vs. out-of-state
+// by the donor's reported mailing address state. A candidate with zero
+// itemized corporate donors (e.g. Foley) has `corporate: null` rather than
+// a zero/zero split, since there's nothing to chart.
+//
 // COMMITTEES MATCHED:
 // - Governor: "Jim Pillen for Governor," "Lynne Walz for Nebraska." Rick
 //   Beard (Legal Marijuana Now) has no registered committee -- hasn't
@@ -56,6 +62,10 @@ const governorDonors = {
     asOf: "2023\u20132026 NADC filings (cycle to date)",
     individualDonorCount: 694,
     individualAverage: 8403,
+    geography: {
+      individual: { nebraska: 5528168, outOfState: 359997 },
+      corporate: { nebraska: 4573005, outOfState: 1410736 },
+    },
     corporate: [
       { name: "POET, LLC", location: "Sioux Falls, SD", amount: 300000 },
       { name: "Union Pacific Railroad Company", location: "Omaha, NE", amount: 285000 },
@@ -87,6 +97,10 @@ const governorDonors = {
     asOf: "2023\u20132026 NADC filings (cycle to date)",
     individualDonorCount: 504,
     individualAverage: 1795,
+    geography: {
+      individual: { nebraska: 871147, outOfState: 33724 },
+      corporate: { nebraska: 73077, outOfState: 0 },
+    },
     corporate: [
       { name: "Mountain to Climb LLC", location: "Omaha, NE", amount: 45000 },
       { name: "Nebraska Groundswell", location: "Lincoln, NE", amount: 13551 },
@@ -118,6 +132,10 @@ const secretaryOfStateDonors = {
     asOf: "2023\u20132026 NADC filings (cycle to date)",
     individualDonorCount: 46,
     individualAverage: 1469,
+    geography: {
+      individual: { nebraska: 65625, outOfState: 1000 },
+      corporate: { nebraska: 2250, outOfState: 0 },
+    },
     corporate: [
       { name: "Penner Patient Care Inc", location: "Aurora, NE", amount: 1000 },
       { name: "Printco Graphics", location: "Omaha, NE", amount: 1000 },
@@ -142,6 +160,10 @@ const secretaryOfStateDonors = {
     asOf: "2023\u20132026 NADC filings (cycle to date)",
     individualDonorCount: 127,
     individualAverage: 187,
+    geography: {
+      individual: { nebraska: 22392, outOfState: 1380 },
+      corporate: { nebraska: 7852, outOfState: 0 },
+    },
     corporate: [
       { name: "Planned Parenthood Advocates of Nebraska", location: "Lincoln, NE", amount: 3352 },
       { name: "Warhorse Gaming", location: "Winnebago, NE", amount: 2500 },
@@ -168,6 +190,10 @@ const attorneyGeneralDonors = {
     asOf: "2023\u20132026 NADC filings (cycle to date)",
     individualDonorCount: 124,
     individualAverage: 3560,
+    geography: {
+      individual: { nebraska: 189350, outOfState: 249499 },
+      corporate: { nebraska: 261080, outOfState: 707500 },
+    },
     corporate: [
       { name: "Reynolds American Inc. / RAI Services", location: "Winston-Salem, NC", amount: 95000 },
       { name: "The Hurst Group LLC", location: "Jackson, MS", amount: 60000 },
@@ -199,6 +225,10 @@ const attorneyGeneralDonors = {
     asOf: "2023\u20132026 NADC filings (cycle to date)",
     individualDonorCount: 48,
     individualAverage: 2407,
+    geography: {
+      individual: { nebraska: 111163, outOfState: 8000 },
+      corporate: { nebraska: 15317, outOfState: 0 },
+    },
     corporate: [
       { name: "Groundswell", location: "Lincoln, NE", amount: 13317 },
       { name: "Nebraska Groundswell", location: "Lincoln, NE", amount: 1000 },
@@ -225,6 +255,10 @@ const treasurerDonors = {
     asOf: "2023\u20132026 NADC filings (cycle to date)",
     individualDonorCount: 81,
     individualAverage: 1722,
+    geography: {
+      individual: { nebraska: 131890, outOfState: 8100 },
+      corporate: { nebraska: 57213, outOfState: 4000 },
+    },
     corporate: [
       { name: "All Metals Market, Inc", location: "Fremont, NE", amount: 10000 },
       { name: "Wholestone Farm II, LLC", location: "Fremont, NE", amount: 10000 },
@@ -259,6 +293,10 @@ const auditorDonors = {
     asOf: "2023\u20132026 NADC filings (cycle to date)",
     individualDonorCount: 35,
     individualAverage: 1344,
+    geography: {
+      individual: { nebraska: 52550, outOfState: 2500 },
+      corporate: null,
+    },
     corporate: [],
     individual: [
       { name: "Deb Placek", location: "Lincoln, NE", amount: 6500 },

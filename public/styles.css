@@ -8,6 +8,7 @@
   --prairie: #2f4858;
   --prairie-dim: #4a6373;
   --sorghum: #a13d2d;
+  --sage: #5c7a3a;
   --border: #d9d0ba;
 
   --font-display: Georgia, "Times New Roman", serif;
@@ -495,6 +496,7 @@ a { color: var(--prairie); }
 .party-badge.party-R { background: var(--sorghum); }
 .party-badge.party-D { background: var(--prairie); }
 .party-badge.party-I { background: var(--gold); }
+.party-badge.party-M { background: var(--sage); }
 
 .senator-name {
   font-weight: 600;
@@ -927,6 +929,68 @@ a { color: var(--prairie); }
   display: block;
   margin-top: 4px;
   font-size: 12.5px;
+}
+
+/* ---------- Nebraska vs. out-of-state pie charts ---------- */
+
+.pie-charts-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.pie-chart-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pie-chart-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+}
+
+.pie-chart-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.pie-chart {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+}
+
+.pie-chart-legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 12.5px;
+}
+
+.pie-chart-legend li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pie-swatch {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
 }
 
 .donor-columns {

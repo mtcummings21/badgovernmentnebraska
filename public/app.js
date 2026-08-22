@@ -967,6 +967,43 @@ function donorColumnHtml(label, donors) {
   `;
 }
 
+function pieChartHtml(title, nebraska, outOfState) {
+  const total = nebraska + outOfState;
+  if (total <= 0) {
+    return `
+      <div class="pie-chart-block">
+        <span class="pie-chart-title">${title}</span>
+        <p class="empty-state">No itemized data.</p>
+      </div>
+    `;
+  }
+  const nePct = (nebraska / total) * 100;
+  const outPct = 100 - nePct;
+  return `
+    <div class="pie-chart-block">
+      <span class="pie-chart-title">${title}</span>
+      <div class="pie-chart-row">
+        <div class="pie-chart" style="background: conic-gradient(var(--prairie) 0 ${nePct}%, var(--gold) ${nePct}% 100%);" role="img" aria-label="${title}: ${nePct.toFixed(0)}% Nebraska, ${outPct.toFixed(0)}% out-of-state"></div>
+        <ul class="pie-chart-legend">
+          <li><span class="pie-swatch" style="background:var(--prairie)"></span>Nebraska &mdash; ${formatDonorAmount(Math.round(nebraska))} (${nePct.toFixed(0)}%)</li>
+          <li><span class="pie-swatch" style="background:var(--gold)"></span>Out-of-state &mdash; ${formatDonorAmount(Math.round(outOfState))} (${outPct.toFixed(0)}%)</li>
+        </ul>
+      </div>
+    </div>
+  `;
+}
+
+function donorGeographyHtml(geography) {
+  if (!geography) return "";
+  const corp = geography.corporate;
+  return `
+    <div class="pie-charts-row">
+      ${pieChartHtml("Individual contributions", geography.individual.nebraska, geography.individual.outOfState)}
+      ${corp ? pieChartHtml("Corporate contributions", corp.nebraska, corp.outOfState) : ""}
+    </div>
+  `;
+}
+
 function donorCandidateCardHtml(c) {
   const td = c.topDonors;
   return `
@@ -989,6 +1026,7 @@ function donorCandidateCardHtml(c) {
               : ""
           }
         </p>
+        ${donorGeographyHtml(td.geography)}
         <div class="donor-columns">
           ${donorColumnHtml("Corporate", td.corporate)}
           ${donorColumnHtml("Individual", td.individual)}
