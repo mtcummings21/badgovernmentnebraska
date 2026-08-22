@@ -896,6 +896,7 @@ async function loadElections() {
 
     renderRaceCards(statewideEl, data.statewideRaces, false);
     renderRaceCards(legEl, data.legislatureRaces, true);
+    renderTopContributions(data);
   } catch (err) {
     console.error("Falling back to nothing, backend unreachable:", err);
     statewideEl.innerHTML = `<p class="empty-state">Could not reach the server. Is it running?</p>`;
@@ -1054,6 +1055,58 @@ function raceSlug(race) {
   return race.office ? slugifyOffice(race.office) : `district-${race.district}`;
 }
 
+function raceLabelFor(race) {
+  return race.office || `Legislature District ${race.district}${race.special ? " (special)" : ""}`;
+}
+
+function computeTopContributions(electionsData, category, limit) {
+  const allRaces = [...electionsData.statewideRaces, ...electionsData.legislatureRaces];
+  const entries = [];
+  allRaces.forEach((race) => {
+    race.candidates.forEach((c) => {
+      if (!c.topDonors || !c.topDonors[category]) return;
+      c.topDonors[category].forEach((d) => {
+        entries.push({ ...d, candidateName: c.name, raceLabel: raceLabelFor(race), raceSlug: raceSlug(race) });
+      });
+    });
+  });
+  return entries.sort((a, b) => b.amount - a.amount).slice(0, limit);
+}
+
+function topContributionColumnHtml(label, entries) {
+  return `
+    <div class="top-contribution-column">
+      <span class="donor-column-label">${label}</span>
+      <ol class="top-contribution-list">
+        ${entries
+          .map(
+            (d) => `
+          <li class="top-contribution-row">
+            <div class="top-contribution-main">
+              <span class="donor-name">${d.name}</span>
+              <span class="donor-amount">${formatDonorAmount(d.amount)}</span>
+            </div>
+            <span class="donor-location">${d.location}</span>
+            <a class="top-contribution-race" href="#/donors/${d.raceSlug}">to ${d.candidateName} &mdash; ${d.raceLabel}</a>
+          </li>
+        `
+          )
+          .join("")}
+      </ol>
+    </div>
+  `;
+}
+
+function renderTopContributions(electionsData) {
+  const container = document.getElementById("top-contributions");
+  if (!container) return;
+  const topIndividual = computeTopContributions(electionsData, "individual", 10);
+  const topCorporate = computeTopContributions(electionsData, "corporate", 10);
+  container.innerHTML = `
+    ${topContributionColumnHtml("Individual", topIndividual)}
+    ${topContributionColumnHtml("Corporate", topCorporate)}
+  `;
+}
 function renderDonorsPage(slug) {
   const container = document.getElementById("donors-candidates");
   const titleEl = document.getElementById("donors-hero-title");
