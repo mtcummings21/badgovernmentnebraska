@@ -9,11 +9,14 @@
 <body>
 
 <header class="site-header">
-  <div class="header-photo">
-    <div class="header-photo-overlay"></div>
-  </div>
   <div class="header-inner">
     <a href="#/" class="wordmark">
+      <svg class="tower-mark" viewBox="0 0 40 60" aria-hidden="true">
+        <rect x="16" y="0" width="8" height="60" fill="currentColor"/>
+        <rect x="8" y="46" width="24" height="14" fill="currentColor"/>
+        <rect x="0" y="54" width="40" height="6" fill="currentColor"/>
+        <circle cx="20" cy="8" r="3" fill="currentColor"/>
+      </svg>
       <div>
         <h1>K Street Chronicle</h1>
         <p class="wordmark-sub">Sower of transparency.</p>
@@ -36,7 +39,10 @@
 <main>
   <section class="home-workspace" id="view-home-workspace">
     <section class="home-intro">
-      <p>Welcome to the K Street Chronicle. This site brings Nebraska state government to your fingertips. Explore the Unicameral, State Officials, State Agencies, and the 2026 Election pages to discover more about the government that answers to you. We hope to make state government more transparent and easier to digest. Remember, the salvation of the state is the watchfulness in the citizen.</p>
+      <div class="home-intro-text">
+        <p>Welcome to the K Street Chronicle. This site brings Nebraska state government to your fingertips. Explore the Unicameral, State Officials, State Agencies, and the 2026 Election pages to discover more about the government that answers to you. We hope to make state government more transparent and easier to digest. Remember, the salvation of the state is the watchfulness in the citizen.</p>
+      </div>
+      <img class="home-intro-photo" src="images/header-capitol.jpg" alt="The Sower statue atop the Nebraska State Capitol dome" />
     </section>
 
     <div class="home-grid" id="home-grid">
@@ -54,6 +60,11 @@
         <span class="home-card-label">State Officials</span>
         <span class="home-card-stat" data-home-stat="offices">&ndash;</span>
         <p class="home-card-desc">The six constitutional executive offices and who currently holds them.</p>
+      </a>
+      <a href="#/agencies" class="home-card">
+        <span class="home-card-label">State Agencies</span>
+        <span class="home-card-stat" data-home-stat="agencies">&ndash;</span>
+        <p class="home-card-desc">Every agency, sorted constitutional, code, and noncode.</p>
       </a>
       <a href="#/news" class="home-card">
         <span class="home-card-label">News</span>

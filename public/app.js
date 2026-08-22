@@ -28,7 +28,8 @@ let allSenators = [];
 let allOffices = [];
 let allNews = [];
 let electionsLoaded = false;
-let agenciesLoaded = false;
+let agenciesData = null;
+let agencyCount = 0;
 let committeesLoaded = false;
 let termInfo = null;
 
@@ -139,7 +140,7 @@ function route() {
     loadDonors(id);
   }
 
-  if (view === "agencies" && !agenciesLoaded) {
+  if (view === "agencies") {
     loadAgencies();
   }
 }
@@ -791,6 +792,7 @@ async function renderHome() {
   if (allSenators.length === 0) pending.push(loadSenators());
   if (allOffices.length === 0) pending.push(loadOffices());
   if (allNews.length === 0) pending.push(loadNews());
+  if (!agenciesData) pending.push(fetchAgencyCount());
   if (pending.length > 0) await Promise.all(pending);
 
   const setStat = (key, value) => {
@@ -800,10 +802,22 @@ async function renderHome() {
   setStat("bills", allBills.length);
   setStat("senators", allSenators.length);
   setStat("offices", allOffices.length);
+  setStat("agencies", agencyCount);
   setStat("news", allNews.length);
 
   renderHomeRecentBills();
   renderHomeRecentNews();
+}
+
+async function fetchAgencyCount() {
+  try {
+    const res = await fetch("/api/agencies");
+    const data = await res.json();
+    agenciesData = data.stateAgencies;
+    agencyCount = Object.values(agenciesData).reduce((sum, cat) => sum + cat.agencies.length, 0);
+  } catch (err) {
+    console.error("Could not fetch agency count:", err);
+  }
 }
 
 function renderHomeRecentBills() {
@@ -1112,14 +1126,15 @@ function renderAgenciesPage(stateAgencies) {
 
 async function loadAgencies() {
   const container = document.getElementById("agencies-categories");
+  if (agenciesData) {
+    renderAgenciesPage(agenciesData);
+    return;
+  }
   container.innerHTML = `<p class="empty-state">Loading&hellip;</p>`;
-  try {
-    const res = await fetch("/api/agencies");
-    const data = await res.json();
-    agenciesLoaded = true;
-    renderAgenciesPage(data.stateAgencies);
-  } catch (err) {
-    console.error("Could not load agencies, backend unreachable:", err);
+  await fetchAgencyCount();
+  if (agenciesData) {
+    renderAgenciesPage(agenciesData);
+  } else {
     container.innerHTML = `<p class="empty-state">Could not reach the server. Is it running?</p>`;
   }
 }
