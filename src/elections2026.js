@@ -34,7 +34,6 @@ function withDonors(candidate) {
 const statewideRaces = [
   {
     office: "Governor & Lieutenant Governor",
-    seatNote: "Gov. Jim Pillen (R) is seeking reelection.",
     candidates: [
       { name: "Jim Pillen", party: "R", incumbent: true },
       { name: "Lynne Walz", party: "D" },
@@ -43,7 +42,6 @@ const statewideRaces = [
   },
   {
     office: "Secretary of State",
-    seatNote: "Incumbent Bob Evnen (R) lost renomination to Scott Petersen in the Republican primary.",
     candidates: [
       { name: "Scott Petersen", party: "R" },
       { name: "Sarah Slattery", party: "D" },
@@ -51,7 +49,6 @@ const statewideRaces = [
   },
   {
     office: "Attorney General",
-    seatNote: "Attorney General Mike Hilgers (R) is seeking reelection.",
     candidates: [
       { name: "Mike Hilgers", party: "R", incumbent: true },
       { name: "Jocelyn Brasher", party: "D" },
@@ -59,7 +56,6 @@ const statewideRaces = [
   },
   {
     office: "State Treasurer",
-    seatNote: "Treasurer Joey Spellerberg (R), appointed in November 2025, is running to keep the seat.",
     candidates: [
       { name: "Joey Spellerberg", party: "R", incumbent: true },
       { name: "Dan Ebers", party: "D" },
@@ -67,37 +63,36 @@ const statewideRaces = [
   },
   {
     office: "Auditor of Public Accounts",
-    seatNote: "Auditor Mike Foley (R) is seeking reelection.",
     candidates: [{ name: "Mike Foley", party: "R", incumbent: true }],
   },
 ];
 
 const legislatureRaces = [
-  { district: 2, seatNote: "Open seat \u2014 Sen. Robert Clements (R) is term-limited.", candidates: [{ name: "Dean Helmick", party: "R" }, { name: "Caitlin Knutson", party: "D" }] },
-  { district: 4, seatNote: "Sen. Brad von Gillern (R) is seeking reelection.", candidates: [{ name: "Brad von Gillern", party: "R", incumbent: true }, { name: "Cindy Maxwell-Ostdiek", party: "I", partyLabel: "Nonpartisan" }] },
-  { district: 6, seatNote: "Open seat \u2014 Sen. Machaela Cavanaugh (D) is term-limited.", candidates: [{ name: "Patrick Leahy", party: "D" }, { name: "Nate Ostdiek", party: "D" }] },
-  { district: 8, seatNote: "Open seat \u2014 Sen. Megan Hunt (I) is term-limited.", candidates: [{ name: "Erin Feichtinger", party: "D" }, { name: "Josh Livingston", party: "D" }] },
-  { district: 10, seatNote: "Open seat \u2014 Sen. Wendy DeBoer (D) is term-limited.", candidates: [{ name: "Cindy Johnson", party: "D" }, { name: "Rebecca Rens", party: "R" }] },
-  { district: 12, seatNote: "Sen. Merv Riepe (R) is seeking reelection.", candidates: [{ name: "Merv Riepe", party: "R", incumbent: true }, { name: "Christy Knorr", party: "D" }] },
-  { district: 14, seatNote: "Open seat \u2014 Speaker John Arch (R) is term-limited.", candidates: [{ name: "SuAnn Witt", party: "D" }, { name: "Bill Bowes", party: "R" }] },
-  { district: 16, seatNote: "Open seat \u2014 Sen. Ben Hansen (R) is term-limited.", candidates: [{ name: "Ted Japp", party: "R" }, { name: "Cindy Chatt", party: "D" }] },
-  { district: 18, seatNote: "Open seat \u2014 Sen. Christy Armendariz (R) is retiring.", candidates: [{ name: "Jess Goldoni", party: "D" }, { name: "Taylor Royal", party: "R" }] },
-  { district: 20, seatNote: "Sen. John Fredrickson (D) is seeking reelection.", candidates: [{ name: "John Fredrickson", party: "D", incumbent: true }, { name: "Chris Anderson", party: "R" }] },
-  { district: 22, seatNote: "Open seat \u2014 Sen. Mike Moser (R) is term-limited.", candidates: [{ name: "Dawson Brunswick", party: "R" }] },
-  { district: 24, seatNote: "Sen. Jana Hughes (R) is seeking reelection.", candidates: [{ name: "Jana Hughes", party: "R", incumbent: true }, { name: "Dan Winter", party: "I", partyLabel: "Nonpartisan" }] },
-  { district: 26, seatNote: "Sen. George Dungan (D) is seeking reelection.", candidates: [{ name: "George Dungan", party: "D", incumbent: true }, { name: "Tobias Howard", party: "R" }] },
-  { district: 28, seatNote: "Open seat \u2014 Sen. Jane Raybould (D) is retiring.", candidates: [{ name: "Patty Pansing Brooks", party: "D", partyLabel: "Democratic, former state senator" }, { name: "Colby L. Woodson", party: "I", partyLabel: "Nonpartisan" }] },
-  { district: 30, seatNote: "Open seat \u2014 Sen. Myron Dorn (R) is term-limited.", candidates: [{ name: "Cally Ideus", party: "R" }, { name: "Janet M. Bock", party: "D" }] },
-  { district: 32, seatNote: "Open seat \u2014 Sen. Tom Brandt (R) is term-limited.", candidates: [{ name: "Mark Schoenrock", party: "R" }, { name: "Shay Smith", party: "I", partyLabel: "Nonpartisan" }] },
-  { district: 34, seatNote: "Sen. Loren Lippincott (R) is seeking reelection.", candidates: [{ name: "Loren Lippincott", party: "R", incumbent: true }, { name: "Ben Blodgett", party: "D" }] },
-  { district: 36, seatNote: "Sen. Rick Holdcroft (R) is seeking reelection.", candidates: [{ name: "Rick Holdcroft", party: "R", incumbent: true }, { name: "Darin Tompkins", party: "D" }] },
-  { district: 38, seatNote: "Open seat \u2014 Sen. Dave Murman (R) is term-limited.", candidates: [{ name: "Tim Anderson", party: "R" }, { name: "Janell Anderson Ehrke", party: "R" }] },
-  { district: 40, seatNote: "Sen. Barry DeKay (R) is seeking reelection.", candidates: [{ name: "Barry DeKay", party: "R", incumbent: true }] },
-  { district: 41, seatNote: "Special election for the remainder of the term after Sen. Dan McKeon (R) resigned in January 2026; appointed successor Fred Meyer (R) did not advance.", candidates: [{ name: "Joe Johnson", party: "R" }, { name: "Jeremy Heneger", party: "D" }], special: true },
-  { district: 42, seatNote: "Sen. Mike Jacobson (R) is seeking reelection.", candidates: [{ name: "Mike Jacobson", party: "R", incumbent: true }, { name: "Shaylee S. Scranton", party: "I", partyLabel: "Nonpartisan" }] },
-  { district: 44, seatNote: "Sen. Teresa Ibach (R) is seeking reelection.", candidates: [{ name: "Teresa Ibach", party: "R", incumbent: true }] },
-  { district: 46, seatNote: "Sen. Danielle Conrad (D) is seeking reelection.", candidates: [{ name: "Danielle Conrad", party: "D", incumbent: true }] },
-  { district: 48, seatNote: "Sen. Brian Hardin (R) is seeking reelection.", candidates: [{ name: "Brian Hardin", party: "R", incumbent: true }, { name: "Jessica M. Landers", party: "R" }] },
+  { district: 2, candidates: [{ name: "Dean Helmick", party: "R" }, { name: "Caitlin Knutson", party: "D" }] },
+  { district: 4, candidates: [{ name: "Brad von Gillern", party: "R", incumbent: true }, { name: "Cindy Maxwell-Ostdiek", party: "I", partyLabel: "Nonpartisan" }] },
+  { district: 6, candidates: [{ name: "Patrick Leahy", party: "D" }, { name: "Nate Ostdiek", party: "D" }] },
+  { district: 8, candidates: [{ name: "Erin Feichtinger", party: "D" }, { name: "Josh Livingston", party: "D" }] },
+  { district: 10, candidates: [{ name: "Cindy Johnson", party: "D" }, { name: "Rebecca Rens", party: "R" }] },
+  { district: 12, candidates: [{ name: "Merv Riepe", party: "R", incumbent: true }, { name: "Christy Knorr", party: "D" }] },
+  { district: 14, candidates: [{ name: "SuAnn Witt", party: "D" }, { name: "Bill Bowes", party: "R" }] },
+  { district: 16, candidates: [{ name: "Ted Japp", party: "R" }, { name: "Cindy Chatt", party: "D" }] },
+  { district: 18, candidates: [{ name: "Jess Goldoni", party: "D" }, { name: "Taylor Royal", party: "R" }] },
+  { district: 20, candidates: [{ name: "John Fredrickson", party: "D", incumbent: true }, { name: "Chris Anderson", party: "R" }] },
+  { district: 22, candidates: [{ name: "Dawson Brunswick", party: "R" }] },
+  { district: 24, candidates: [{ name: "Jana Hughes", party: "R", incumbent: true }, { name: "Dan Winter", party: "I", partyLabel: "Nonpartisan" }] },
+  { district: 26, candidates: [{ name: "George Dungan", party: "D", incumbent: true }, { name: "Tobias Howard", party: "R" }] },
+  { district: 28, candidates: [{ name: "Patty Pansing Brooks", party: "D", partyLabel: "Democratic, former state senator" }, { name: "Colby L. Woodson", party: "I", partyLabel: "Nonpartisan" }] },
+  { district: 30, candidates: [{ name: "Cally Ideus", party: "R" }, { name: "Janet M. Bock", party: "D" }] },
+  { district: 32, candidates: [{ name: "Mark Schoenrock", party: "R" }, { name: "Shay Smith", party: "I", partyLabel: "Nonpartisan" }] },
+  { district: 34, candidates: [{ name: "Loren Lippincott", party: "R", incumbent: true }, { name: "Ben Blodgett", party: "D" }] },
+  { district: 36, candidates: [{ name: "Rick Holdcroft", party: "R", incumbent: true }, { name: "Darin Tompkins", party: "D" }] },
+  { district: 38, candidates: [{ name: "Tim Anderson", party: "R" }, { name: "Janell Anderson Ehrke", party: "R" }] },
+  { district: 40, candidates: [{ name: "Barry DeKay", party: "R", incumbent: true }] },
+  { district: 41, candidates: [{ name: "Joe Johnson", party: "R" }, { name: "Jeremy Heneger", party: "D" }], special: true },
+  { district: 42, candidates: [{ name: "Mike Jacobson", party: "R", incumbent: true }, { name: "Shaylee S. Scranton", party: "I", partyLabel: "Nonpartisan" }] },
+  { district: 44, candidates: [{ name: "Teresa Ibach", party: "R", incumbent: true }] },
+  { district: 46, candidates: [{ name: "Danielle Conrad", party: "D", incumbent: true }] },
+  { district: 48, candidates: [{ name: "Brian Hardin", party: "R", incumbent: true }, { name: "Jessica M. Landers", party: "R" }] },
 ];
 
 module.exports = { GENERAL_ELECTION_DATE, PRIMARY_ELECTION_DATE, statewideRaces, legislatureRaces };

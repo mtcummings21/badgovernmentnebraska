@@ -794,14 +794,6 @@ a { color: var(--prairie); }
   font-size: 15px;
 }
 
-.race-seat-note {
-  font-size: 12.5px;
-  color: var(--muted);
-  margin: 4px 0 0;
-  padding-top: 8px;
-  border-top: 1px solid var(--border);
-}
-
 .race-candidates {
   display: flex;
   flex-direction: column;
@@ -886,22 +878,7 @@ a { color: var(--prairie); }
 .donors-candidates {
   display: flex;
   flex-direction: column;
-  gap: 36px;
-}
-
-.donor-race-section {
-  display: flex;
-  flex-direction: column;
   gap: 20px;
-}
-
-.donor-race-title {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 22px;
-  margin: 0;
-  padding-bottom: 8px;
-  border-bottom: 2px solid var(--gold-dim);
 }
 
 .donor-race-cards {
@@ -1303,11 +1280,6 @@ a { color: var(--prairie); }
   text-decoration: underline;
 }
 
-.agency-note {
-  color: var(--muted);
-  font-size: 11.5px;
-  font-family: var(--font-mono);
-}
 
 /* ---------- Responsive ---------- */
 

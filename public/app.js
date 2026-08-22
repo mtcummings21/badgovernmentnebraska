@@ -136,7 +136,7 @@ function route() {
   }
 
   if (view === "donors") {
-    loadDonors();
+    loadDonors(id);
   }
 
   if (view === "agencies" && !agenciesLoaded) {
@@ -921,8 +921,7 @@ function renderRaceCards(container, races, isLegislature) {
         <article class="race-card">
           <span class="race-office">${title}</span>
           <div class="race-candidates">${race.candidates.map(raceCandidateHtml).join("")}</div>
-          ${race.seatNote ? `<p class="race-seat-note">${race.seatNote}</p>` : ""}
-          ${hasDonorData ? `<a href="#/donors" class="race-donors-link">View donor/campaign contributions &rarr;</a>` : ""}
+          ${hasDonorData ? `<a href="#/donors/${slugifyOffice(race.office)}" class="race-donors-link">View donor/campaign contributions &rarr;</a>` : ""}
         </article>
       `;
     })
@@ -1001,38 +1000,43 @@ function donorCandidateCardHtml(c) {
   `;
 }
 
-function donorRaceSectionHtml(race) {
-  return `
-    <section class="donor-race-section">
-      <h3 class="donor-race-title">${race.office}</h3>
-      <div class="donor-race-cards">
-        ${race.candidates.map(donorCandidateCardHtml).join("")}
-      </div>
-    </section>
-  `;
+function slugifyOffice(office) {
+  return office
+    .toLowerCase()
+    .replace(/&/g, "and")
+    .replace(/['']/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
 }
 
-function renderDonorsPage() {
+function renderDonorsPage(slug) {
   const container = document.getElementById("donors-candidates");
+  const titleEl = document.getElementById("donors-hero-title");
+  const backLinkEl = document.getElementById("donors-back-link");
   if (!electionsData) {
     container.innerHTML = `<p class="empty-state">Could not load donor data. Is the server running?</p>`;
     return;
   }
-  const racesWithDonors = electionsData.statewideRaces.filter((r) => r.candidates.some((c) => c.topDonors));
-  if (!racesWithDonors.length) {
-    container.innerHTML = `<p class="empty-state">No donor data found.</p>`;
+  const race = electionsData.statewideRaces.find(
+    (r) => r.candidates.some((c) => c.topDonors) && slugifyOffice(r.office) === slug
+  );
+  if (!race) {
+    if (titleEl) titleEl.textContent = "Donor & campaign contributions.";
+    container.innerHTML = `<p class="empty-state">No donor data found for that race.</p>`;
     return;
   }
-  container.innerHTML = racesWithDonors.map(donorRaceSectionHtml).join("");
+  if (titleEl) titleEl.textContent = `${race.office}: donor & campaign contributions.`;
+  if (backLinkEl) backLinkEl.href = "#/elections";
+  container.innerHTML = race.candidates.map(donorCandidateCardHtml).join("");
 }
 
-async function loadDonors() {
+async function loadDonors(slug) {
   const container = document.getElementById("donors-candidates");
   container.innerHTML = `<p class="empty-state">Loading&hellip;</p>`;
   if (!electionsData) {
     await loadElections();
   }
-  renderDonorsPage();
+  renderDonorsPage(slug);
 }
 
 // ---------------------------------------------------------------------------
@@ -1060,7 +1064,6 @@ function agencyCategoryHtml(key, category) {
               <span class="agency-name">${a.name}</span>
               ${a.url ? `<a class="agency-link" href="${a.url}" target="_blank" rel="noopener">Website &rarr;</a>` : ""}
             </div>
-            ${a.note ? `<span class="agency-note">${a.note}</span>` : ""}
           </li>
         `
           )
