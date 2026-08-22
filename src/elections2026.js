@@ -20,9 +20,25 @@
 // the May 12, 2026 primary; the general election is November 3, 2026.
 
 const { candidateDonors } = require("./donors2026");
+const { partyForDistrict } = require("./senatorParty");
 
 const GENERAL_ELECTION_DATE = "November 3, 2026";
 const PRIMARY_ELECTION_DATE = "May 12, 2026";
+
+// Party of the CURRENT officeholder (not necessarily a candidate in this
+// race -- for open seats, the outgoing officeholder isn't running again).
+// For legislature races this cross-references src/senatorParty.js, the
+// same hand-maintained roster used on the Unicameral page, so it stays
+// consistent with the current-session seat map. For statewide races, the
+// marked incumbent's party is used where one is running; Secretary of
+// State has no incumbent candidate (Bob Evnen lost renomination), so his
+// party is given explicitly via `explicitHolderParty`.
+function withCurrentHolderParty(race, explicitHolderParty) {
+  const incumbent = race.candidates.find((c) => c.incumbent);
+  const currentHolderParty =
+    incumbent?.party || explicitHolderParty || (race.district ? partyForDistrict(race.district) : null);
+  return { ...race, currentHolderParty };
+}
 
 // Attach top-donor data (see donors2026.js) to a Governor candidate by name,
 // so it's a no-op for candidates who don't have a matching NADC committee.
@@ -65,7 +81,7 @@ const statewideRaces = [
     office: "Auditor of Public Accounts",
     candidates: [{ name: "Mike Foley", party: "R", incumbent: true }].map(withDonors),
   },
-];
+].map((r) => withCurrentHolderParty(r, r.office === "Secretary of State" ? "R" : null));
 
 const legislatureRaces = [
   { district: 2, candidates: [{ name: "Dean Helmick", party: "R" }, { name: "Caitlin Knutson", party: "D" }] },
@@ -93,6 +109,6 @@ const legislatureRaces = [
   { district: 44, candidates: [{ name: "Teresa Ibach", party: "R", incumbent: true }] },
   { district: 46, candidates: [{ name: "Danielle Conrad", party: "D", incumbent: true }] },
   { district: 48, candidates: [{ name: "Brian Hardin", party: "R", incumbent: true }, { name: "Jessica M. Landers", party: "R" }] },
-];
+].map((r) => withCurrentHolderParty(r));
 
 module.exports = { GENERAL_ELECTION_DATE, PRIMARY_ELECTION_DATE, statewideRaces, legislatureRaces };

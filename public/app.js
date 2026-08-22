@@ -919,8 +919,9 @@ function renderRaceCards(container, races, isLegislature) {
     .map((race) => {
       const title = isLegislature ? `District ${race.district}${race.special ? " (special)" : ""}` : race.office;
       const hasDonorData = !isLegislature && race.candidates.some((c) => c.topDonors);
+      const holderClass = race.currentHolderParty ? ` race-card-holder-${race.currentHolderParty}` : "";
       return `
-        <article class="race-card">
+        <article class="race-card${holderClass}">
           <span class="race-office">${title}</span>
           <div class="race-candidates">${race.candidates.map(raceCandidateHtml).join("")}</div>
           ${hasDonorData ? `<a href="#/donors/${slugifyOffice(race.office)}" class="race-donors-link">View donor/campaign contributions &rarr;</a>` : ""}
