@@ -1,18 +1,19 @@
 // Top individual and corporate donors for 2026 Nebraska statewide races
-// (Governor, Secretary of State, Attorney General).
+// (Governor, Secretary of State, Attorney General, State Treasurer, Auditor
+// of Public Accounts).
 //
 // Hand-maintained, not scraped -- sourced directly from the Nebraska
 // Accountability and Disclosure Commission's (NADC) bulk contribution/loan
 // data exports (nadc-e.nebraska.gov/PublicSite/DataDownload.aspx), covering
-// the 2023-2026 filing years as extracted 8/14/2026 (Governor race) and
-// 8/21/2026 (Secretary of State and Attorney General races). Figures are
-// cycle-to-date totals for each candidate's registered committee, aggregated
-// by donor name across all four years and ranked by total dollars given.
-// Excludes the state's own "$250-or-less, not itemized" small-dollar
-// aggregate line and PAC/party-committee money (tracked separately, not
-// shown here). Lists are top 10 by dollar amount, or fewer where a
-// candidate simply doesn't have 10 distinct donors on file in that category
-// (noted per-candidate below where that applies).
+// the 2023-2026 filing years as extracted 8/14/2026 (Governor race), 8/21/2026
+// (Secretary of State and Attorney General races), and 8/22/2026 (Treasurer
+// and Auditor races). Figures are cycle-to-date totals for each candidate's
+// registered committee, aggregated by donor name across all four years and
+// ranked by total dollars given. Excludes the state's own "$250-or-less, not
+// itemized" small-dollar aggregate line and PAC/party-committee money
+// (tracked separately, not shown here). Lists are top 10 by dollar amount,
+// or fewer where a candidate simply doesn't have 10 distinct donors on file
+// in that category (noted per-candidate below where that applies).
 //
 // individualDonorCount / individualAverage are computed across ALL itemized
 // individual contributions (not just the top 10 shown), excluding NADC's
@@ -33,6 +34,17 @@
 //   favor of his current, active committee.
 // - Attorney General: "Friends of Mike Hilgers" (Mike Hilgers) and
 //   "Brasher for NE AG" (Jocelyn Brasher).
+// - State Treasurer: "Spellerberg for Nebraska" (Joey Spellerberg). He also
+//   has an unrelated committee, "Joey Spellerberg for Mayor," from an
+//   earlier Fremont mayoral run ($758K+ raised there) -- excluded here since
+//   it isn't this race. Dan Ebers has no registered committee on file, so no
+//   donor data exists for him.
+// - Auditor of Public Accounts: Mike Foley (unopposed) -- his contributions
+//   are combined from two committees, "Foley for the People- Auditor (2022)"
+//   and "Foley for the People- Auditor (2026)." The "(2022)" committee is
+//   his real ongoing committee (active every year 2023-2026, ~$71,750
+//   total); "(2026)" is a newer, much smaller filing (~$1,500). Both appear
+//   to fund the same current officeholder/candidate, so they're combined.
 //
 // REVISIT: these are cycle-to-date snapshots, not final. Update after later
 // NADC filing deadlines as the general election nears.
@@ -206,13 +218,79 @@ const attorneyGeneralDonors = {
   },
 };
 
+const treasurerDonors = {
+  "Joey Spellerberg": {
+    committeeName: "Spellerberg for Nebraska",
+    totalRaised: 379136,
+    asOf: "2023\u20132026 NADC filings (cycle to date)",
+    individualDonorCount: 81,
+    individualAverage: 1722,
+    corporate: [
+      { name: "All Metals Market, Inc", location: "Fremont, NE", amount: 10000 },
+      { name: "Wholestone Farm II, LLC", location: "Fremont, NE", amount: 10000 },
+      { name: "Fremont Beef Company", location: "Fremont, NE", amount: 10000 },
+      { name: "Hawkins Construction Company", location: "Omaha, NE", amount: 5000 },
+      { name: "S2 Rolloffs, LLC", location: "Fremont, NE", amount: 5000 },
+      { name: "Nebraska Bank", location: "Dodge, NE", amount: 2500 },
+      { name: "Mueller Robak, LLC", location: "Lincoln, NE", amount: 2500 },
+      { name: "Charter Communications", location: "St Louis, MO", amount: 2500 },
+      { name: "Adams and Sullivan Attorneys", location: "Papillion, NE", amount: 2500 },
+      { name: "Great Plains Communications, Inc.", location: "Blair, NE", amount: 1500 },
+    ],
+    individual: [
+      { name: "Sid Dillon", location: "Fremont, NE", amount: 10000 },
+      { name: "Thomas Weitzenkamp", location: "Hooper, NE", amount: 10000 },
+      { name: "Jeff Wilmes", location: "Valley, NE", amount: 10000 },
+      { name: "Robert Murray", location: "Fremont, NE", amount: 10000 },
+      { name: "J Peter (Pete) Ricketts", location: "Omaha, NE", amount: 10000 },
+      { name: "Steve Roy", location: "Alex City, AL", amount: 5000 },
+      { name: "Marlin Brabec", location: "Ames, NE", amount: 5000 },
+      { name: "Blake Dillon", location: "Fremont, NE", amount: 5000 },
+      { name: "Samuel Heineman", location: "Fremont, NE", amount: 5000 },
+      { name: "Lorelee Byrd", location: "Arlington, NE", amount: 5000 },
+    ],
+  },
+};
+
+const auditorDonors = {
+  "Mike Foley": {
+    committeeName: "Foley for the People- Auditor",
+    totalRaised: 73257,
+    asOf: "2023\u20132026 NADC filings (cycle to date)",
+    individualDonorCount: 35,
+    individualAverage: 1344,
+    corporate: [],
+    individual: [
+      { name: "Deb Placek", location: "Lincoln, NE", amount: 6500 },
+      { name: "Richard Clements", location: "Elmwood, NE", amount: 5000 },
+      { name: "Donald Dillon", location: "Lincoln, NE", amount: 3000 },
+      { name: "Joseph Kerrigan", location: "Lincoln, NE", amount: 2500 },
+      { name: "Richard Noel", location: "Lincoln, NE", amount: 2500 },
+      { name: "Peter Demarco", location: "Springfield, NE", amount: 2000 },
+      { name: "Matt Tasler", location: "Lincoln, NE", amount: 2000 },
+      { name: "Susan Meckel", location: "Lincoln, NE", amount: 2000 },
+      { name: "Mary Volkmer", location: "Lincoln, NE", amount: 2000 },
+      { name: "Mike Lawlor", location: "Omaha, NE", amount: 1500 },
+    ],
+  },
+};
+
 // Merged lookup, keyed by candidate name -- this is what elections2026.js
-// actually reads from. Candidate names are unique across these three races,
-// so a flat merge is safe.
+// actually reads from. Candidate names are unique across these races, so a
+// flat merge is safe.
 const candidateDonors = {
   ...governorDonors,
   ...secretaryOfStateDonors,
   ...attorneyGeneralDonors,
+  ...treasurerDonors,
+  ...auditorDonors,
 };
 
-module.exports = { governorDonors, secretaryOfStateDonors, attorneyGeneralDonors, candidateDonors };
+module.exports = {
+  governorDonors,
+  secretaryOfStateDonors,
+  attorneyGeneralDonors,
+  treasurerDonors,
+  auditorDonors,
+  candidateDonors,
+};

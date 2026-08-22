@@ -59,11 +59,11 @@ const statewideRaces = [
     candidates: [
       { name: "Joey Spellerberg", party: "R", incumbent: true },
       { name: "Dan Ebers", party: "D" },
-    ],
+    ].map(withDonors),
   },
   {
     office: "Auditor of Public Accounts",
-    candidates: [{ name: "Mike Foley", party: "R", incumbent: true }],
+    candidates: [{ name: "Mike Foley", party: "R", incumbent: true }].map(withDonors),
   },
 ];
 
