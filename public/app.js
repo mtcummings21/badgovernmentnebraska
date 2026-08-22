@@ -918,13 +918,13 @@ function renderRaceCards(container, races, isLegislature) {
   container.innerHTML = races
     .map((race) => {
       const title = isLegislature ? `District ${race.district}${race.special ? " (special)" : ""}` : race.office;
-      const hasDonorData = !isLegislature && race.candidates.some((c) => c.topDonors);
+      const hasDonorData = race.candidates.some((c) => c.topDonors);
       const holderClass = race.currentHolderParty ? ` race-card-holder-${race.currentHolderParty}` : "";
       return `
         <article class="race-card${holderClass}">
           <span class="race-office">${title}</span>
           <div class="race-candidates">${race.candidates.map(raceCandidateHtml).join("")}</div>
-          ${hasDonorData ? `<a href="#/donors/${slugifyOffice(race.office)}" class="race-donors-link">View donor/campaign contributions &rarr;</a>` : ""}
+          ${hasDonorData ? `<a href="#/donors/${raceSlug(race)}" class="race-donors-link">View donor/campaign contributions &rarr;</a>` : ""}
         </article>
       `;
     })
@@ -1050,6 +1050,10 @@ function slugifyOffice(office) {
     .replace(/(^-|-$)/g, "");
 }
 
+function raceSlug(race) {
+  return race.office ? slugifyOffice(race.office) : `district-${race.district}`;
+}
+
 function renderDonorsPage(slug) {
   const container = document.getElementById("donors-candidates");
   const titleEl = document.getElementById("donors-hero-title");
@@ -1058,15 +1062,15 @@ function renderDonorsPage(slug) {
     container.innerHTML = `<p class="empty-state">Could not load donor data. Is the server running?</p>`;
     return;
   }
-  const race = electionsData.statewideRaces.find(
-    (r) => r.candidates.some((c) => c.topDonors) && slugifyOffice(r.office) === slug
-  );
+  const allRaces = [...electionsData.statewideRaces, ...electionsData.legislatureRaces];
+  const race = allRaces.find((r) => r.candidates.some((c) => c.topDonors) && raceSlug(r) === slug);
   if (!race) {
     if (titleEl) titleEl.textContent = "Donor & campaign contributions.";
     container.innerHTML = `<p class="empty-state">No donor data found for that race.</p>`;
     return;
   }
-  if (titleEl) titleEl.textContent = `${race.office}: donor & campaign contributions.`;
+  const title = race.office || `Legislature District ${race.district}${race.special ? " (special)" : ""}`;
+  if (titleEl) titleEl.textContent = `${title}: donor & campaign contributions.`;
   if (backLinkEl) backLinkEl.href = "#/elections";
   container.innerHTML = race.candidates.map(donorCandidateCardHtml).join("");
 }

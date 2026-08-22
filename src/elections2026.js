@@ -109,6 +109,8 @@ const legislatureRaces = [
   { district: 44, candidates: [{ name: "Teresa Ibach", party: "R", incumbent: true }] },
   { district: 46, candidates: [{ name: "Danielle Conrad", party: "D", incumbent: true }] },
   { district: 48, candidates: [{ name: "Brian Hardin", party: "R", incumbent: true }, { name: "Jessica M. Landers", party: "R" }] },
-].map((r) => withCurrentHolderParty(r));
+]
+  .map((r) => ({ ...r, candidates: r.candidates.map(withDonors) }))
+  .map((r) => withCurrentHolderParty(r));
 
 module.exports = { GENERAL_ELECTION_DATE, PRIMARY_ELECTION_DATE, statewideRaces, legislatureRaces };
