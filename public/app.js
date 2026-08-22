@@ -1073,6 +1073,31 @@ function computeTopContributions(electionsData, category, limit) {
   return entries.sort((a, b) => b.amount - a.amount).slice(0, limit);
 }
 
+// Sums a single donor's total giving across every race/candidate they gave
+// to (keyed by name + city + state, so two different people who happen to
+// share a name aren't merged together). Different from the raw list above,
+// which just ranks single largest checks -- this surfaces repeat donors
+// who spread smaller amounts across many candidates.
+function computeAggregateContributions(electionsData, category, limit) {
+  const allRaces = [...electionsData.statewideRaces, ...electionsData.legislatureRaces];
+  const totals = new Map();
+  allRaces.forEach((race) => {
+    race.candidates.forEach((c) => {
+      if (!c.topDonors || !c.topDonors[category]) return;
+      c.topDonors[category].forEach((d) => {
+        const key = `${d.name}|${d.location}`;
+        if (!totals.has(key)) {
+          totals.set(key, { name: d.name, location: d.location, amount: 0, candidates: [] });
+        }
+        const entry = totals.get(key);
+        entry.amount += d.amount;
+        entry.candidates.push(c.name);
+      });
+    });
+  });
+  return [...totals.values()].sort((a, b) => b.amount - a.amount).slice(0, limit);
+}
+
 function topContributionColumnHtml(label, entries) {
   return `
     <div class="top-contribution-column">
@@ -1097,15 +1122,54 @@ function topContributionColumnHtml(label, entries) {
   `;
 }
 
+function aggregateContributionColumnHtml(label, entries) {
+  return `
+    <div class="top-contribution-column">
+      <span class="donor-column-label">${label}</span>
+      <ol class="top-contribution-list">
+        ${entries
+          .map((d) => {
+            const uniqueCandidates = [...new Set(d.candidates)];
+            const candidateText =
+              uniqueCandidates.length > 1
+                ? `to ${uniqueCandidates.length} candidates: ${uniqueCandidates.join(", ")}`
+                : `to ${uniqueCandidates[0]}`;
+            return `
+          <li class="top-contribution-row">
+            <div class="top-contribution-main">
+              <span class="donor-name">${d.name}</span>
+              <span class="donor-amount">${formatDonorAmount(Math.round(d.amount))}</span>
+            </div>
+            <span class="donor-location">${d.location}</span>
+            <span class="top-contribution-race">${candidateText}</span>
+          </li>
+        `;
+          })
+          .join("")}
+      </ol>
+    </div>
+  `;
+}
+
 function renderTopContributions(electionsData) {
   const container = document.getElementById("top-contributions");
-  if (!container) return;
-  const topIndividual = computeTopContributions(electionsData, "individual", 10);
-  const topCorporate = computeTopContributions(electionsData, "corporate", 10);
-  container.innerHTML = `
-    ${topContributionColumnHtml("Individual", topIndividual)}
-    ${topContributionColumnHtml("Corporate", topCorporate)}
-  `;
+  const aggregateContainer = document.getElementById("aggregate-top-contributions");
+  if (container) {
+    const topIndividual = computeTopContributions(electionsData, "individual", 10);
+    const topCorporate = computeTopContributions(electionsData, "corporate", 10);
+    container.innerHTML = `
+      ${topContributionColumnHtml("Corporate", topCorporate)}
+      ${topContributionColumnHtml("Individual", topIndividual)}
+    `;
+  }
+  if (aggregateContainer) {
+    const aggIndividual = computeAggregateContributions(electionsData, "individual", 10);
+    const aggCorporate = computeAggregateContributions(electionsData, "corporate", 10);
+    aggregateContainer.innerHTML = `
+      ${aggregateContributionColumnHtml("Corporate", aggCorporate)}
+      ${aggregateContributionColumnHtml("Individual", aggIndividual)}
+    `;
+  }
 }
 function renderDonorsPage(slug) {
   const container = document.getElementById("donors-candidates");
