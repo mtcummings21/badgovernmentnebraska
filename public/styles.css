@@ -128,7 +128,10 @@ a { color: var(--prairie); }
   background: none;
   border: none;
   cursor: pointer;
-  font: inherit;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 .nav-dropdown-menu {
