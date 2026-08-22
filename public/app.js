@@ -158,23 +158,11 @@ async function loadBills() {
     const res = await fetch("/api/bills");
     const data = await res.json();
     allBills = data.bills || [];
-    updateSourcePill(data.source);
     updateStats(allBills);
     applyFiltersAndRender();
   } catch (err) {
     console.error("Falling back to nothing, backend unreachable:", err);
     listEl.innerHTML = `<p class="empty-state">Could not reach the server. Is it running?</p>`;
-  }
-}
-
-function updateSourcePill(source) {
-  const pill = document.getElementById("source-pill");
-  if (source === "legiscan") {
-    pill.textContent = "Live via LegiScan";
-    pill.className = "source-pill live";
-  } else {
-    pill.textContent = "Sample data";
-    pill.className = "source-pill sample";
   }
 }
 
@@ -426,9 +414,9 @@ function renderSeatMap(senators) {
   const dotRadius = 5;
   const pad = dotRadius + 4;
   const viewW = outerRadius * 2 + pad * 2;
-  const viewH = outerRadius + pad;
+  const cyOffset = pad;
+  const viewH = outerRadius + pad + cyOffset;
   const cx = viewW / 2;
-  const cyOffset = 0;
 
   const dots = seats
     .map((seat, i) => {
