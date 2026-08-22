@@ -33,15 +33,32 @@ a { color: var(--prairie); }
 /* ---------- Header ---------- */
 
 .site-header {
+  position: relative;
   background: var(--prairie);
   color: var(--limestone);
   border-bottom: 4px solid var(--gold);
 }
 
+.header-photo {
+  position: absolute;
+  inset: 0;
+  background-image: url("images/header-capitol.jpg");
+  background-size: cover;
+  background-position: center 35%;
+}
+
+.header-photo-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(15, 26, 33, 0.55) 0%, rgba(15, 26, 33, 0.78) 100%);
+}
+
 .header-inner {
+  position: relative;
   max-width: 1180px;
   margin: 0 auto;
-  padding: 18px 28px;
+  padding: 56px 28px;
+  min-height: 110px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -57,29 +74,24 @@ a { color: var(--prairie); }
   text-decoration: none;
 }
 
-.tower-mark {
-  width: 26px;
-  height: 40px;
-  color: var(--gold);
-  flex-shrink: 0;
-}
-
 .wordmark h1 {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: clamp(20px, 3.4vw, 30px);
+  font-size: clamp(24px, 4.2vw, 38px);
   letter-spacing: 0.01em;
   margin: 0;
   line-height: 1.05;
   white-space: nowrap;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
 }
 
 .wordmark-sub {
-  margin: 2px 0 0;
+  margin: 4px 0 0;
   font-size: 12.5px;
   color: var(--gold-dim);
   text-transform: uppercase;
   letter-spacing: 0.08em;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.45);
 }
 
 /* ---------- Primary nav ---------- */
