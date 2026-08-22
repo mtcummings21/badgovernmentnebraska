@@ -76,7 +76,26 @@ function currentRoute() {
 
 function setActiveTab(view) {
   document.querySelectorAll(".nav-tab").forEach((tab) => {
-    tab.classList.toggle("active", tab.dataset.view === view);
+    const matches = tab.dataset.view === view || tab.dataset.viewAlt === view;
+    tab.classList.toggle("active", matches);
+  });
+  document.querySelectorAll(".nav-dropdown-item").forEach((item) => {
+    const itemView = item.getAttribute("href") === "#/donors" ? "donors" : "elections";
+    item.classList.toggle("active", itemView === view);
+  });
+}
+
+function initNavDropdown() {
+  const dropdown = document.querySelector(".nav-dropdown");
+  const toggle = document.querySelector(".nav-dropdown-toggle");
+  if (!dropdown || !toggle) return;
+  toggle.addEventListener("click", (e) => {
+    e.stopPropagation();
+    dropdown.classList.toggle("open");
+  });
+  document.addEventListener("click", () => dropdown.classList.remove("open"));
+  dropdown.querySelectorAll(".nav-dropdown-item").forEach((item) => {
+    item.addEventListener("click", () => dropdown.classList.remove("open"));
   });
 }
 
@@ -896,7 +915,6 @@ async function loadElections() {
 
     renderRaceCards(statewideEl, data.statewideRaces, false);
     renderRaceCards(legEl, data.legislatureRaces, true);
-    renderTopContributions(data);
   } catch (err) {
     console.error("Falling back to nothing, backend unreachable:", err);
     statewideEl.innerHTML = `<p class="empty-state">Could not reach the server. Is it running?</p>`;
@@ -1171,24 +1189,69 @@ function renderTopContributions(electionsData) {
     `;
   }
 }
+let donorSelectPopulated = false;
+
+function populateDonorRaceSelect(electionsData) {
+  const select = document.getElementById("donor-race-select");
+  if (!select || donorSelectPopulated) return;
+
+  const statewideOptions = electionsData.statewideRaces
+    .filter((r) => r.candidates.some((c) => c.topDonors))
+    .map((r) => `<option value="${raceSlug(r)}">${r.office}</option>`)
+    .join("");
+
+  const legislatureOptions = electionsData.legislatureRaces
+    .filter((r) => r.candidates.some((c) => c.topDonors))
+    .map((r) => `<option value="${raceSlug(r)}">District ${r.district}${r.special ? " (special)" : ""}</option>`)
+    .join("");
+
+  select.innerHTML = `
+    <option value="">All Races &mdash; Top Contributions Overview</option>
+    <optgroup label="Statewide Offices">${statewideOptions}</optgroup>
+    <optgroup label="Nebraska Legislature">${legislatureOptions}</optgroup>
+  `;
+
+  select.addEventListener("change", () => {
+    location.hash = select.value ? `#/donors/${select.value}` : "#/donors";
+  });
+
+  donorSelectPopulated = true;
+}
+
 function renderDonorsPage(slug) {
   const container = document.getElementById("donors-candidates");
+  const overviewEl = document.getElementById("donors-overview");
   const titleEl = document.getElementById("donors-hero-title");
   const backLinkEl = document.getElementById("donors-back-link");
+  const select = document.getElementById("donor-race-select");
   if (!electionsData) {
     container.innerHTML = `<p class="empty-state">Could not load donor data. Is the server running?</p>`;
     return;
   }
+
+  populateDonorRaceSelect(electionsData);
+  if (backLinkEl) backLinkEl.href = "#/elections";
+
+  if (!slug) {
+    if (select) select.value = "";
+    if (titleEl) titleEl.textContent = "Donor & campaign contributions.";
+    if (overviewEl) overviewEl.hidden = false;
+    container.innerHTML = "";
+    renderTopContributions(electionsData);
+    return;
+  }
+
   const allRaces = [...electionsData.statewideRaces, ...electionsData.legislatureRaces];
   const race = allRaces.find((r) => r.candidates.some((c) => c.topDonors) && raceSlug(r) === slug);
+  if (overviewEl) overviewEl.hidden = true;
   if (!race) {
     if (titleEl) titleEl.textContent = "Donor & campaign contributions.";
     container.innerHTML = `<p class="empty-state">No donor data found for that race.</p>`;
     return;
   }
+  if (select) select.value = slug;
   const title = race.office || `Legislature District ${race.district}${race.special ? " (special)" : ""}`;
   if (titleEl) titleEl.textContent = `${title}: donor & campaign contributions.`;
-  if (backLinkEl) backLinkEl.href = "#/elections";
   container.innerHTML = race.candidates.map(donorCandidateCardHtml).join("");
 }
 
@@ -1262,4 +1325,5 @@ async function loadAgencies() {
 }
 
 loadBills();
+initNavDropdown();
 route();

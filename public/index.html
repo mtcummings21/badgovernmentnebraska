@@ -31,7 +31,13 @@
       <a href="#/offices" class="nav-tab" data-view="offices">State Officials</a>
       <a href="#/agencies" class="nav-tab" data-view="agencies">State Agencies</a>
       <a href="#/news" class="nav-tab" data-view="news">News</a>
-      <a href="#/elections" class="nav-tab" data-view="elections">2026 Election</a>
+      <div class="nav-dropdown">
+        <button type="button" class="nav-tab nav-dropdown-toggle" data-view="elections" data-view-alt="donors">2026 Election &#9662;</button>
+        <div class="nav-dropdown-menu">
+          <a href="#/elections" class="nav-dropdown-item">Races</a>
+          <a href="#/donors" class="nav-dropdown-item">Donors/Contributions</a>
+        </div>
+      </div>
     </div>
   </nav>
 </header>
@@ -220,15 +226,7 @@
   </section>
 
   <section class="elections-workspace" id="view-elections-workspace" hidden>
-    <p class="elections-legend">* indicates an incumbent seeking reelection.</p>
-
-    <h3 class="elections-section-title">Top Contributions, All Races</h3>
-    <p class="elections-note">The single largest individual and corporate contributions reported to NADC across every 2026 statewide and Legislature race with donor data on file.</p>
-    <div id="top-contributions" class="top-contributions-grid" aria-live="polite"></div>
-
-    <h3 class="elections-section-title">Aggregate Top 10, All Races</h3>
-    <p class="elections-note">The same donors, but summed across every candidate they gave to -- surfaces repeat donors whose individual checks are smaller but who gave to many races. Only totals what's captured in each candidate's own top-10 list above, so a donor's true lifetime total could be higher if they also gave smaller, uncaptured amounts.</p>
-    <div id="aggregate-top-contributions" class="top-contributions-grid" aria-live="polite"></div>
+    <p class="elections-legend">* indicates an incumbent seeking reelection. <a href="#/donors" class="elections-donors-link">View donor &amp; campaign contributions for these races &rarr;</a></p>
 
     <h3 class="elections-section-title">Statewide Offices</h3>
     <div id="statewide-races" class="races-grid" aria-live="polite"></div>
@@ -241,10 +239,27 @@
   <section class="hero" id="view-donors" hidden>
     <a href="#/elections" class="donors-back-link" id="donors-back-link">&larr; Back to 2026 Election</a>
     <h2 class="hero-title-wide" id="donors-hero-title">Donor &amp; campaign contributions.</h2>
-    <p class="hero-sub">Top corporate and individual donors to this race's candidates.</p>
+    <p class="hero-sub">Pick a race below, or browse the top contributions across every 2026 statewide and Legislature race.</p>
   </section>
 
   <section class="donors-workspace" id="view-donors-workspace" hidden>
+    <div class="donor-race-selector">
+      <label for="donor-race-select">Choose a race</label>
+      <select id="donor-race-select">
+        <option value="">All Races &mdash; Top Contributions Overview</option>
+      </select>
+    </div>
+
+    <div id="donors-overview">
+      <h3 class="elections-section-title">Top Contributions, All Races</h3>
+      <p class="elections-note">The single largest individual and corporate contributions reported to NADC across every 2026 statewide and Legislature race with donor data on file.</p>
+      <div id="top-contributions" class="top-contributions-grid" aria-live="polite"></div>
+
+      <h3 class="elections-section-title">Aggregate Top 10, All Races</h3>
+      <p class="elections-note">The same donors, but summed across every candidate they gave to &mdash; surfaces repeat donors whose individual checks are smaller but who gave to many races. Only totals what's captured in each candidate's own top-10 list above, so a donor's true lifetime total could be higher if they also gave smaller, uncaptured amounts.</p>
+      <div id="aggregate-top-contributions" class="top-contributions-grid" aria-live="polite"></div>
+    </div>
+
     <div id="donors-candidates" class="donors-candidates" aria-live="polite"></div>
   </section>
 
