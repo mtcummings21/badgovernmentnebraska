@@ -226,7 +226,15 @@
   </section>
 
   <section class="elections-workspace" id="view-elections-workspace" hidden>
-    <p class="elections-legend">* indicates an incumbent seeking reelection. <a href="#/donors" class="elections-donors-link">View donor &amp; campaign contributions for these races &rarr;</a></p>
+    <p class="elections-legend">* indicates an incumbent seeking reelection.</p>
+    <p class="elections-legend elections-legend-borders">
+      The outline color of each box shows the party that currently holds that seat:
+      <span class="legend-swatch" style="background:var(--sorghum)"></span>Republican
+      <span class="legend-swatch" style="background:var(--prairie)"></span>Democratic
+      <span class="legend-swatch" style="background:var(--gold)"></span>Independent
+      <span class="legend-swatch" style="background:var(--sage)"></span>Legal Marijuana Now
+    </p>
+    <p class="elections-legend"><a href="#/donors" class="elections-donors-link">View donor &amp; campaign contributions for these races &rarr;</a></p>
 
     <h3 class="elections-section-title">Statewide Offices</h3>
     <div id="statewide-races" class="races-grid" aria-live="polite"></div>

@@ -824,7 +824,26 @@ a { color: var(--prairie); }
   font-family: var(--font-mono);
   font-size: 12px;
   color: var(--muted);
-  margin: 0 0 24px;
+  margin: 0 0 8px;
+}
+
+.elections-legend:last-of-type {
+  margin-bottom: 24px;
+}
+
+.elections-legend-borders {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 6px;
+}
+
+.legend-swatch {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  margin-left: 6px;
 }
 
 .top-contributions-grid {
