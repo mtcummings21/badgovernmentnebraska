@@ -12,7 +12,7 @@
 
   --font-display: Georgia, "Times New Roman", serif;
   --font-body: Georgia, "Times New Roman", serif;
-  --font-mono: "IBM Plex Mono", monospace;
+  --font-mono: Georgia, "Times New Roman", serif;
 }
 
 * { box-sizing: border-box; }
@@ -622,6 +622,18 @@ a { color: var(--prairie); }
 
 .home-workspace[hidden] {
   display: none;
+}
+
+.home-intro {
+  max-width: 68ch;
+  margin: 0 0 36px;
+}
+
+.home-intro p {
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--ink);
+  margin: 0;
 }
 
 .home-grid {

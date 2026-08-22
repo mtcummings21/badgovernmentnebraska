@@ -908,7 +908,6 @@ function raceCandidateHtml(c) {
         <span class="race-candidate-name">${c.name}${c.incumbent ? "*" : ""}</span>
       </div>
       ${c.partyLabel ? `<span class="race-candidate-running-mate">${c.partyLabel}</span>` : ""}
-      ${c.runningMate ? `<span class="race-candidate-running-mate">&amp; ${c.runningMate}</span>` : ""}
     </div>
   `;
 }
@@ -923,7 +922,6 @@ function renderRaceCards(container, races, isLegislature) {
           <span class="race-office">${title}</span>
           <div class="race-candidates">${race.candidates.map(raceCandidateHtml).join("")}</div>
           ${race.seatNote ? `<p class="race-seat-note">${race.seatNote}</p>` : ""}
-          ${race.note ? `<p class="race-note">${race.note}</p>` : ""}
           ${hasDonorData ? `<a href="#/donors" class="race-donors-link">View donor/campaign contributions &rarr;</a>` : ""}
         </article>
       `;
